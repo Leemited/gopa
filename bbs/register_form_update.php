@@ -4,6 +4,8 @@ include_once(G5_CAPTCHA_PATH.'/captcha.lib.php');
 include_once(G5_LIB_PATH.'/register.lib.php');
 include_once(G5_LIB_PATH.'/mailer.lib.php');
 
+
+
 // 리퍼러 체크
 referer_check();
 
@@ -49,7 +51,7 @@ $mb_addr_jibeon = isset($_POST['mb_addr_jibeon'])   ? trim($_POST['mb_addr_jibeo
 $mb_signature   = isset($_POST['mb_signature'])     ? trim($_POST['mb_signature'])   : "";
 $mb_profile     = isset($_POST['mb_profile'])       ? trim($_POST['mb_profile'])     : "";
 $mb_recommend   = isset($_POST['mb_recommend'])     ? trim($_POST['mb_recommend'])   : "";
-$mb_mailling    = isset($_POST['mb_mailling'])      ? trim($_POST['mb_mailling'])    : "";
+$mb_mailling    = isset($_POST['mb_mailling'])      ? 1 : "";
 $mb_sms         = isset($_POST['mb_sms'])           ? trim($_POST['mb_sms'])         : "";
 $mb_1           = isset($_POST['mb_1'])             ? trim($_POST['mb_1'])           : "";
 $mb_2           = isset($_POST['mb_2'])             ? trim($_POST['mb_2'])           : "";
@@ -60,13 +62,14 @@ $mb_6           = isset($_POST['mb_6'])             ? trim($_POST['mb_6'])      
 $mb_7           = isset($_POST['mb_7'])             ? trim($_POST['mb_7'])           : "";
 $mb_8           = isset($_POST['mb_8'])             ? trim($_POST['mb_8'])           : "";
 $mb_9           = isset($_POST['mb_9'])             ? trim($_POST['mb_9'])           : "";
-$mb_10          = isset($_POST['mb_10'])            ? trim($_POST['mb_10'])          : "";
+$mb_10          = isset($_POST['mb_10'])            ? trim($_POST['mb_10'])           : "";
 $regid          = isset($_POST['regid'])            ? trim($_POST['regid'])          : "";
+$off_gcm        = isset($_POST['off_gcm'])          ? trim($_POST['off_gcm'])          : "";
 
 if ($w == '' || $w == 'u') {
 
     if ($msg = empty_mb_id($mb_id))         alert($msg, "", true, true); // alert($msg, $url, $error, $post);
-    if ($msg = valid_mb_id($mb_id))         alert($msg, "", true, true);
+    //if ($msg = valid_mb_id($mb_id))         alert($msg, "", true, true);
     if ($msg = count_mb_id($mb_id))         alert($msg, "", true, true);
 
     if ($w == '' && !$mb_password)
@@ -94,10 +97,10 @@ if ($w == '' || $w == 'u') {
         if ($msg = exist_mb_id($mb_id))     alert($msg);
 
         // 본인확인 체크
-        if($config['cf_cert_use'] && $config['cf_cert_req']) {
+        /*if($config['cf_cert_use'] && $config['cf_cert_req']) {
             if(trim($_POST['cert_no']) != $_SESSION['ss_cert_no'] || !$_SESSION['ss_cert_no'])
                 alert("회원가입을 위해서는 본인확인을 해주셔야 합니다.");
-        }
+        }*/
 
         if ($config['cf_use_recommend'] && $mb_recommend) {
             if (!exist_mb_id($mb_recommend))
@@ -120,7 +123,7 @@ if ($w == '' || $w == 'u') {
     if ($msg = exist_mb_email($mb_email, $mb_id))   alert($msg, "", true, true);
 }
 
-//$mb_name        = clean_xss_tags($mb_name);
+$mb_name        = clean_xss_tags($mb_name);
 $mb_email       = get_email_address($mb_email);
 $mb_homepage    = clean_xss_tags($mb_homepage);
 $mb_tel         = clean_xss_tags($mb_tel);
@@ -188,6 +191,7 @@ if ($w == '') {
                      mb_nick_date = '".G5_TIME_YMD."',
                      mb_email = '{$mb_email}',
                      mb_homepage = '{$mb_homepage}',
+                     mb_sex = '{$mb_sex}',
                      mb_tel = '{$mb_tel}',
                      mb_zip1 = '{$mb_zip1}',
                      mb_zip2 = '{$mb_zip2}',
@@ -292,9 +296,10 @@ if ($w == '') {
     $sql_email_certify = '';
     if ($old_email != $mb_email && $config['cf_use_email_certify'])
         $sql_email_certify = " , mb_email_certify = '' ";
-
+//mb_name = '{$mb_name}',
     $sql = " update {$g5['member_table']}
                 set mb_nick = '{$mb_nick}',
+                    mb_sex = '{$mb_sex}',
                     mb_mailling = '{$mb_mailling}',
                     mb_sms = '{$mb_sms}',
                     mb_open = '{$mb_open}',

@@ -1,4 +1,7 @@
 $(function(){
+
+
+
 	$(".mobile_menu_btn").click(function(){
 		$(".mobile_menu").fadeIn(300,function(){
 			$(".mobile_menu").addClass("active");

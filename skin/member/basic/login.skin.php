@@ -38,7 +38,12 @@ $member_id = get_cookie('ck_save_id');
 						</div>
 					</div>
 					<input type="submit" value="로그인" class="grid_100 btn">
+                    <?php
+                    // 소셜로그인 버튼
+                    include_once(G5_PLUGIN_PATH.'/oauth/login.skin.inc.php');
+                    ?>
 				</form>
+
 				<div class="login_link">
 					<ul>
 						<li>아이디/비밀번호를 잊어버리셨나요?<a href="<?php echo G5_BBS_URL ?>/password_lost.php" class="btn">아이디 / 비밀번호찾기</a></li>

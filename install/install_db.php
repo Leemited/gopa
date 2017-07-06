@@ -295,7 +295,7 @@ fclose($f);
     </ol>
 
     <div class="inner_btn">
-        <a href="../index.php">새로운 그누보드5로 이동</a>
+        <a href="../index_old.php">새로운 그누보드5로 이동</a>
     </div>
 
 </div>

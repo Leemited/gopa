@@ -1,381 +1,408 @@
 <?php
-define('_INDEX_', true);
-include_once('./_common.php');
+include_once("./common.php");
 include_once(G5_LIB_PATH.'/thumbnail.lib.php');
-// 초기화면 파일 경로 지정 : 이 코드는 가능한 삭제하지 마십시오.
-if ($config['cf_include_index'] && is_file(G5_PATH.'/'.$config['cf_include_index'])) {
-    include_once(G5_PATH.'/'.$config['cf_include_index']);
-    return; // 이 코드의 아래는 실행을 하지 않습니다.
+include_once(G5_PATH."/head.php");
+
+
+$query=sql_query("select a.*, b.* from g5_write_main as a left join store_detail as b on a.wr_id = b.wr_id where a.wr_is_comment=0 ");
+while($data=sql_fetch_array($query)){
+    $list[]=$data;
 }
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MOBILE_PATH.'/index.php');
-    return;
-}
-$main=true;
-include_once('./_head.php');
-$best_tel=sql_fetch("select * from `best_tel`");
 $now=date("Y-m-d h:i:s");
-$event_sql="SELECT * FROM  `g5_write_event` WHERE  `wr_1`<='$now' and `wr_2`>='$now'";
+$event_sql="SELECT * FROM  `g5_write_main` WHERE  `wr_1`<='$now' and `wr_2`>='$now' and `wr_3` = 'Y' ";
 $event_query=sql_query($event_sql);
 while($event_data=sql_fetch_array($event_query)){
-	$event_list[]=$event_data;
+    $event_list[]=$event_data;
 }
-$notice_sql="SELECT * FROM  `g5_write_notice` order by wr_id desc limit 0,5";
-$notice_query=sql_query($notice_sql);
-while($notice_data=sql_fetch_array($notice_query)){
-	$notice_list[]=$notice_data;
-}
-$best_short=sql_fetch("select * from `best_short`");
+
+
 ?>
-<script type="text/javascript">
-	$(function(){
-		$(".beta a").click(function(){
-			$(".beta").fadeOut(500);
-		});
-	})
-</script>
-<!-- <div class="beta">
-	<div>
-		<div>
-			<img src="<?php echo G5_IMG_URL."/beta_img.png"; ?>" alt="image" />
-			<a href="javascript:">확인</a>
-		</div>
-	</div>
-</div> -->
-<div class="width-fixed">
-	<?php
-	if(defined('_INDEX_')) { // index에서만 실행
-		include_once(G5_BBS_PATH.'/newwin.inc.php'); // 팝업레이어
-	}
-	?>
-	<div id="main_event" class="owl-carousel">
-	<?php
-		for($i=0;$i<count($event_list);$i++){
-			$thumb = get_list_thumbnail("event", $event_list[$i]['wr_id'], 1100, 464);
-			if($thumb['src']) {
-				$img_content = '<img src="'.$thumb['src'].'" alt="'.$thumb['alt'].'">';
-			}
-			if($img_content){
-	?>
-		<div class="item"><a href="<?php echo G5_BBS_URL."/board.php?bo_table=event&wr_id=".$event_list[$i]['wr_id']; ?>"><?php echo $img_content; ?></a></div>
-	<?php
-			}
-		}
-		if(count($event_list)<=0){
-	?>
-		<div class="item"><a href="<?php echo G5_URL; ?>"><img src="<?php echo G5_IMG_URL."/main_slide.jpg"; ?>" alt="image" /></a></div>
-	<?php
-		}
-	?>
-	</div>
-	<div class="wrap">
-	<?php
-		if(count($notice_list)>0){
-	?>
-		<div id="main_notice">
-			<h3>공지::</h3>
-			<ul>
-			<?php
-			for($i=0;$i<count($notice_list);$i++){
-			?>
-				<li><a href="<?php echo G5_BBS_URL."/board.php?bo_table=notice&wr_id=".$notice_list[$i]['wr_id']; ?>"><span><?php echo date("Y.m.d",strtotime($notice_list[$i]['wr_datetime'])); ?></span><?php echo $notice_list[$i]['wr_subject']; ?></a></li>
-			<?php } ?>
-			</ul>
-			<span><a href="<?php echo G5_BBS_URL."/board.php?bo_table=notice"; ?>"></a></span>
-		</div>
-	<?php
-	}
-	$now=date("Y-m-d h:i:s");
-	$menu1_event=sql_fetch("SELECT * FROM  `g5_write_event` WHERE  `wr_1`<='$now' and `wr_2`>='$now' and `wr_3`='단기대여' and `wr_6`<>''");
-	$menu2_event=sql_fetch("SELECT * FROM  `g5_write_event` WHERE  `wr_1`<='$now' and `wr_2`>='$now' and `wr_3`='장기대여' and `wr_6`<>''");
-	$menu3_event=sql_fetch("SELECT * FROM  `g5_write_event` WHERE  `wr_1`<='$now' and `wr_2`>='$now' and `wr_3`='사고대차' and `wr_6`<>''");
-	?>
-		<div id="main_banner">
-			<div class="menu">
-				<div>
-					<div class="menu1"><div><a href="<?php echo G5_URL."/page/rent/list.php"; ?>"><?php if($menu1_event['wr_id']){ ?><i class="event"></i><?php } ?><span class="icon"></span><span class="txt"></span></a></div></div>
-					<div class="menu2"><div><a href="<?php echo G5_URL."/page/rent/long.php"; ?>"><?php if($menu2_event['wr_id']){ ?><i class="event"></i><?php } ?><span class="icon"></span><span class="txt"></span></a></div></div>
-					<div class="menu3"><div><a href="<?php echo G5_URL."/page/accident"; ?>"><?php if($menu3_event['wr_id']){ ?><i class="event"></i><?php } ?><span class="icon"></span><span class="txt"></span></a></div></div>
-					<div class="menu4"><div><a href="<?php echo G5_URL."/page/mypage/reserve.php"; ?>"><span class="icon"></span><span class="txt"></span></a></div></div>
-				</div>
-			</div>
-			<div class="call">
-				<a href="tel:<?php echo $best_tel['tel']; ?>">
-					<h3>빠르고 간편한 <span>전화예약</span></h3>
-					<h1><?php echo dot_hp_number($best_tel['tel']); ?></h1>
-					<h4><?php if(!$best_tel['all']){ ?>영업시간&nbsp;&nbsp;&nbsp;&nbsp;<?php echo date("A h:i",strtotime($best_tel['time1'])); ?>&nbsp;&nbsp;~&nbsp;&nbsp;<?php echo date("A h:i",strtotime($best_tel['time2'])); ?><?php }else{ ?>연중무휴 24시간 영업<?php } ?></h4>
-					<i></i>
-				</a>
-			</div>
-		</div>
-		<div id="main_way">
-			<a href="<?php echo G5_URL."/page/guide/direction.php"; ?>">
-				<h3>베스트 렌트카 오프라인 지점</h3>
-				<h1>오시는 길 안내</h1>
-				<i></i>
-			</a>
-		</div>
-		<div id="main_tab">
-			<div class="menu">
-				<ul>
-					<li rel="small" class="active">소형</li>
-					<li rel="middle">중형</li>
-					<li rel="big">대형</li>
-					<li rel="van">승합</li>
-					<li rel="suvrv">SUV/RV</li>
-					<li rel="imported">수입</li>
-				</ul>
-			</div>
-			<div id="small" class="tab_content active">
-				<div class="table04">
-					<table>
-						<tr class="bg">
-							<th>1 ~ 2일</th>
-							<td><?php echo number_format($best_short['s1']); ?> ~</td>
-						</tr>
-						<tr>
-							<th>3 ~ 4일</th>
-							<td><?php echo number_format($best_short['s3']); ?> ~</td>
-						</tr>
-						<tr class="bg">
-							<th>5 ~ 6일</th>
-							<td><?php echo number_format($best_short['s5']); ?> ~</td>
-						</tr>
-						<tr>
-							<th>7일 ~</th>
-							<td><?php echo number_format($best_short['s7']); ?> ~</td>
-						</tr>
-						<tr class="bg">
-							<th>시간당</th>
-							<td><?php echo number_format($best_short['sh']); ?> ~</td>
-						</tr>
-						<tr >
-							<th colspan="2"><span style="font-size:12px">시간당 요금은 하루 이상 대여시 추가되는 금액입니다.</span></th>
-						</tr>
-					</table>
-				</div>
-			</div>
-			<div id="middle" class="tab_content">
-				<div class="table04">
-					<table>
-						<tr class="bg">
-							<th>1 ~ 2일</th>
-							<td><?php echo number_format($best_short['m1']); ?> ~</td>
-						</tr>
-						<tr>
-							<th>3 ~ 4일</th>
-							<td><?php echo number_format($best_short['m3']); ?> ~</td>
-						</tr>
-						<tr class="bg">
-							<th>5 ~ 6일</th>
-							<td><?php echo number_format($best_short['m5']); ?> ~</td>
-						</tr>
-						<tr>
-							<th>7일 ~</th>
-							<td><?php echo number_format($best_short['m7']); ?> ~</td>
-						</tr>
-						<tr class="bg">
-							<th>시간당</th>
-							<td><?php echo number_format($best_short['mh']); ?> ~</td>
-						</tr>
-						<tr >
-							<th colspan="2"><span style="font-size:12px">시간당 요금은 하루 이상 대여시 추가되는 금액입니다.</span></th>
-						</tr>
-					</table>
-				</div>
-			</div>
-			<div id="big" class="tab_content">
-				<div class="table04">
-					<table>
-						<tr class="bg">
-							<th>1 ~ 2일</th>
-							<td><?php echo number_format($best_short['b1']); ?> ~</td>
-						</tr>
-						<tr>
-							<th>3 ~ 4일</th>
-							<td><?php echo number_format($best_short['b3']); ?> ~</td>
-						</tr>
-						<tr class="bg">
-							<th>5 ~ 6일</th>
-							<td><?php echo number_format($best_short['b5']); ?> ~</td>
-						</tr>
-						<tr>
-							<th>7일 ~</th>
-							<td><?php echo number_format($best_short['b7']); ?> ~</td>
-						</tr>
-						<tr class="bg">
-							<th>시간당</th>
-							<td><?php echo number_format($best_short['bh']); ?> ~</td>
-						</tr>
-						<tr >
-							<th colspan="2"><span style="font-size:12px">시간당 요금은 하루 이상 대여시 추가되는 금액입니다.</span></th>
-						</tr>
-					</table>
-				</div>
-			</div>
-			<div id="van" class="tab_content">
-				<div class="table04">
-					<table>
-						<tr class="bg">
-							<th>1 ~ 2일</th>
-							<td><?php echo number_format($best_short['v1']); ?> ~</td>
-						</tr>
-						<tr>
-							<th>3 ~ 4일</th>
-							<td><?php echo number_format($best_short['v3']); ?> ~</td>
-						</tr>
-						<tr class="bg">
-							<th>5 ~ 6일</th>
-							<td><?php echo number_format($best_short['v5']); ?> ~</td>
-						</tr>
-						<tr>
-							<th>7일 ~</th>
-							<td><?php echo number_format($best_short['v7']); ?> ~</td>
-						</tr>
-						<tr class="bg">
-							<th>시간당</th>
-							<td><?php echo number_format($best_short['vh']); ?> ~</td>
-						</tr>
-						<tr >
-							<th colspan="2"><span style="font-size:12px">시간당 요금은 하루 이상 대여시 추가되는 금액입니다.</span></th>
-						</tr>
-					</table>
-				</div>
-			</div>
-			<div id="imported" class="tab_content">
-				<div class="table04">
-					<table>
-						<tr class="bg">
-							<th>1 ~ 2일</th>
-							<td><?php echo $best_short['i1']?number_format($best_short['i1'])." ~":"전화상담"; ?></td>
-						</tr>
-						<tr>
-							<th>3 ~ 4일</th>
-							<td><?php echo $best_short['i3']?number_format($best_short['i3'])." ~":"전화상담"; ?></td>
-						</tr>
-						<tr class="bg">
-							<th>5 ~ 6일</th>
-							<td><?php echo $best_short['i5']?number_format($best_short['i5'])." ~":"전화상담"; ?></td>
-						</tr>
-						<tr>
-							<th>7일 ~</th>
-							<td><?php echo $best_short['i7']?number_format($best_short['i7'])." ~":"전화상담"; ?></td>
-						</tr>
-						<tr class="bg">
-							<th>시간당</th>
-							<td><?php echo $best_short['ih']?number_format($best_short['ih'])." ~":"전화상담"; ?></td>
-						</tr>
-						<tr >
-							<th colspan="2"><span style="font-size:12px">시간당 요금은 하루 이상 대여시 추가되는 금액입니다.</span></th>
-						</tr>
-					</table>
-				</div>
-			</div>
-			<div id="suvrv" class="tab_content">
-				<div class="table04">
-					<table>
-						<tr class="bg">
-							<th>1 ~ 2일</th>
-							<td><?php echo $best_short['r1']?number_format($best_short['r1'])." ~":"전화상담"; ?></td>
-						</tr>
-						<tr>
-							<th>3 ~ 4일</th>
-							<td><?php echo $best_short['r3']?number_format($best_short['r3'])." ~":"전화상담"; ?></td>
-						</tr>
-						<tr class="bg">
-							<th>5 ~ 6일</th>
-							<td><?php echo $best_short['r5']?number_format($best_short['r5'])." ~":"전화상담"; ?></td>
-						</tr>
-						<tr>
-							<th>7일 ~</th>
-							<td><?php echo $best_short['r7']?number_format($best_short['r7'])." ~":"전화상담"; ?></td>
-						</tr>
-						<tr class="bg">
-							<th>시간당</th>
-							<td><?php echo $best_short['rh']?number_format($best_short['rh'])." ~":"전화상담"; ?></td>
-						</tr>
-						<tr >
-							<th colspan="2"><span style="font-size:12px">시간당 요금은 하루 이상 대여시 추가되는 금액입니다.</span></th>
-						</tr>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
-	<?php
-		$partner_sql="SELECT * FROM  `best_partner` WHERE  `show` =  '1'";
-		$partner_query=sql_query($partner_sql);
-		while($partner_data=sql_fetch_array($partner_query)){
-			$partner_list[]=$partner_data;
-		}
-		if(count($partner_list)>0){
-	?>
-	<div id="main_partner" class="owl-carousel">
-	<?php
-		for($i=0;$i<count($partner_list);$i++){
-	?>
-		<div class="item"><a href="<?php echo G5_URL."/page/partner?id=".$partner_list[$i]['id']; ?>"><img src="<?php echo G5_DATA_URL."/partner/".$partner_list[$i]['banner']; ?>" alt="<?php echo $partner_list[$i]['name']; ?>" /></a></div>
-	<?php
-		}
-	?>
-	</div>
-	<?php } ?>
-	
-</div>
-<script type="text/javascript">
-	$(function () {
-		$(".tab_content").hide();
-		$(".tab_content:first").show();
-		$("#main_tab > div li").click(function () {
-			$("#main_tab > div li").removeClass("active");
-			$(this).addClass("active");
-			$(".tab_content").hide()
-			var activeTab = $(this).attr("rel");
-			$("#" + activeTab).fadeIn()
-		});
-	});
-	$(function(){
-		var owl1=$("#main_event");
-		var owl2=$("#main_partner");
-		owl1.owlCarousel({
-			animateOut: 'fadeOut',
-			autoplay:true,
-			autoplayTimeout:5000,
-			autoplaySpeed:2000,
-			smartSpeed:2000,
-			loop:true,
-			dots:true,
-			items:1
-		});
-		owl2.owlCarousel({
-			autoplay:true,
-			navText: [ '', '' ],
-			autoplayTimeout:5000,
-			autoplaySpeed:2000,
-			smartSpeed:2000,
-			loop:true,
-			dots:false,
-			nav:true,
-			items:1
-		});
-		setTimeout(function(){main_notice_slide()},5000);
-		var n=0;
-		var main_notice_len=$("#main_notice li").length;
-		/* 메인배너 슬라이드 */
-		function main_notice_slide(act,roop){
-			n++;
-			if(n>=main_notice_len){
-				n=0;
-			}
-			go=n * -46;
-			$("#main_notice ul").animate(
-				{'margin-top': go+'px'}
-			);
-			setTimeout(function(){main_notice_slide()},5000);
-		}
-	});
-</script>
+    <div class="width-fixed">
+        <div class="select-all">
+            <!--<div class="accordion">
+                <h1 class="loc">지역 <img src="<?php /*echo G5_IMG_URL; */?>/arrow.png" alt="select-arrow"></h1>
+                <div class="opened-for-codepen">
+                    <h2 class="all">전체보기</h2>
+                    <h2>상당구</h2>
+                    <ul class="opened-for-codepen">
+                        <li>낭성면</li>
+                        <li>미원면</li>
+                        <li>가덕면</li>
+                        <li>남일면</li>
+                        <li>문의면</li>
+                        <li>중앙동</li>
+                        <li>성안동</li>
+                        <li>탑대성동</li>
+                        <li>영운동</li>
+                        <li>금천동</li>
+                        <li>용담명암산성동</li>
+                        <li>용암1동</li>
+                        <li>용암2동</li>
+                    </ul>
+                    <h2>서원구</h2>
+                    <ul class="opened-for-codepen">
+                        <li>남이면</li>
+                        <li>현도면</li>
+                        <li>사직1동</li>
+                        <li>사직2동</li>
+                        <li>사창동</li>
+                        <li>모충동</li>
+                        <li>분평동</li>
+                        <li>산남동</li>
+                        <li>수곡1동</li>
+                        <li>수곡2동</li>
+                        <li>성화개신죽림동</li>
+                    </ul>
+                    <h2>청원구</h2>
+                    <ul class="opened-for-codepen">
+                        <li>내수읍</li>
+                        <li>오창읍</li>
+                        <li>북이면</li>
+                        <li>우암동</li>
+                        <li>내덕1동</li>
+                        <li>내덕2동</li>
+                        <li>율량사천동</li>
+                        <li>오근장동</li>
+                    </ul>
+                    <h2>흥덕구</h2>
+                    <ul class="opened-for-codepen">
+                        <li>오송읍</li>
+                        <li>강내면</li>
+                        <li>옥산면</li>
+                        <li>운천신봉동</li>
+                        <li>복대1동</li>
+                        <li>복대2동</li>
+                        <li>가경동</li>
+                        <li>봉명1동</li>
+                        <li>봉명2송정동</li>
+                        <li>강서1동</li>
+                        <li>강서2동</li>
+                    </ul>
+                </div>
+            </div>-->
+            <div class="accordion">
+                <h1 class="loc harf-first">지역 <img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow"></h1>
+                <div class="opened-for-codepen harf">
+                    <h2 class="all">전체보기</h2>
+                    <h2>상당구</h2>
+                    <ul class="opened-for-codepen price">
+                        <li>낭성면</li>
+                        <li>미원면</li>
+                        <li>가덕면</li>
+                        <li>남일면</li>
+                        <li>문의면</li>
+                        <li>중앙동</li>
+                        <li>성안동</li>
+                        <li>탑대성동</li>
+                        <li>영운동</li>
+                        <li>금천동</li>
+                        <li>용담명암산성동</li>
+                        <li>용암1동</li>
+                        <li>용암2동</li>
+                    </ul>
+                    <h2>서원구</h2>
+                    <ul class="opened-for-codepen price">
+                        <li>남이면</li>
+                        <li>현도면</li>
+                        <li>사직1동</li>
+                        <li>사직2동</li>
+                        <li>사창동</li>
+                        <li>모충동</li>
+                        <li>분평동</li>
+                        <li>산남동</li>
+                        <li>수곡1동</li>
+                        <li>수곡2동</li>
+                        <li>성화개신죽림동</li>
+                    </ul>
+                    <h2>청원구</h2>
+                    <ul class="opened-for-codepen price">
+                        <li>내수읍</li>
+                        <li>오창읍</li>
+                        <li>북이면</li>
+                        <li>우암동</li>
+                        <li>내덕1동</li>
+                        <li>내덕2동</li>
+                        <li>율량사천동</li>
+                        <li>오근장동</li>
+                    </ul>
+                    <h2>흥덕구</h2>
+                    <ul class="opened-for-codepen">
+                        <li>오송읍</li>
+                        <li>강내면</li>
+                        <li>옥산면</li>
+                        <li>운천신봉동</li>
+                        <li>복대1동</li>
+                        <li>복대2동</li>
+                        <li>가경동</li>
+                        <li>봉명1동</li>
+                        <li>봉명2송정동</li>
+                        <li>강서1동</li>
+                        <li>강서2동</li>
+                    </ul>
+                </div>
+                <h1 class="harf-first center-acc">업종 <img src="<?php echo G5_IMG_URL;?>/arrow.png" alt="select-arrow"></h1>
+                <div class="opened-for-codepen harf-first">
+                    <h2 class="line">전체보기</h2>
+                    <h2>카페/디저트</h2>
+                    <h2 class="line">한식/분식</h2>
+                    <h2>중식</h2>
+                    <h2 class="line">고기/족발/보쌈</h2>
+                    <h2>치킨/피자</h2>
+                    <h2 class="line">패스트푸드</h2>
+                    <h2>야식/찜/탕</h2>
+                    <h2 class="line">도시락/죽/기타</h2>
+                    <h2>회/돈까스/일식</h2>
+                </div>
+                <h1 class="harf">가맹점 <img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow"></h1>
+                <div class="opened-for-codepen harf pay">
+                    <h2>전체보기</h2>
+                    <h2>고파페이</h2>
+                    <h2>현장결제</h2>
+                    <h2>주문결제</h2>
+                    <h2>통합포인트</h2>
+                    <h2>단독포인트</h2>
+                </div>
+            </div>
+        </div>
+        <div style="clear: both;"></div>
+        <div class="sel-align">
+            <div class="select-align">
+                <input type="radio" name="align" id="new" checked value="1">
+                <label for="new" ><span class="radio">최신순</span></label>
+            </div>
+            <div class="select-align">
+                <input type="radio" name="align" id="hit" value="2">
+                <label for="hit"><span class="radio">인기순</span></label>
+            </div>
+            <?php if($mobile){?>
+            <div class="select-align">
+                <input type="radio" name="align" id="loc" value="3">
+                <label for="loc"><span class="radio">거리순</span></label>
+            </div>
+            <?php }?>
+        </div>
+        <div style="clear: both;"></div>
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+            <?php
+            for($i=0;$i<count($event_list);$i++){
+                $thumb = get_list_thumbnail("main", $event_list[$i]['wr_id'], 1100, 464);
+                if($thumb['src']) {
+                    $img_content = '<img src="'.$thumb['src'].'" alt="'.$thumb['alt'].'">';
+                }
+                $even = $event_list[$i]['wr_comment'];
+                if($even==0){
+                    $rank_total = $event_list[$i]["wr_4"];
+                }else {
+                    $rank_total = ceil($event_list[$i]["wr_4"] / $event_list[$i]['wr_comment']);
+                }
+                switch ($rank_total){
+                    case "5":
+                        $rank = "★★★★★";
+                        break;
+                    case "4":
+                        $rank = "★★★★☆";
+                        break;
+                    case "3":
+                        $rank = "★★★☆☆";
+                        break;
+                    case "2":
+                        $rank = "★★☆☆☆";
+                        break;
+                    case "1":
+                        $rank = "★☆☆☆☆";
+                        break;
+                    case "0":
+                        $rank = "☆☆☆☆☆";
+                        break;
+                }
+                if($img_content){
+                    ?>
+                    <div class="swiper-slide">
+                        <a href="<?php echo G5_BBS_URL."/board.php?bo_table=event&wr_id=".$event_list[$i]['wr_id']; ?>"><?php echo $img_content; ?>
+                            <div class="rank-block" >
+                                <p class="rank"><?=$rank?><span style="float: right;"><?php echo $event_list[$i]["wr_subject"]?></span></p>
+                            </div>
+                        </a>
+                    </div>
+                    <?php
+                }
+            }
+            if(count($event_list)<=0){
+                ?>
+                <div class="swiper-slide"><a href="<?php echo G5_URL; ?>"><img src="<?php echo G5_IMG_URL."/main_slide.jpg"; ?>" alt="image" /></a></div>
+                <?php
+            }
+            ?>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+        <div class="clear"></div>
+        <section class="section01">
+            <div class="section01_content">
+                <div class="rent_list">
+                    <ul>
+                        <?php
+                        for($i=0;$i<count($list);$i++){
+                            //$id=$list[$i]['model'];
+                            $thumb = get_list_thumbnail("main", $list[$i]['wr_id'], 1100, 464);
+                            if($thumb['src']) {
+                                $img_content = '<img src="'.$thumb['src'].'" alt="'.$thumb['alt'].'">';
+                            }
+
+                            $link="javascript:location.href='".G5_URL."/page/rent/view.php?wr_id=".$list[$i]['wr_id']."&type=".$type."'";
+
+                            $time = explode("|",$list[$i]['wr_5']);
+                            $point = explode("|",$list[$i]['wr_8']);
+                            ?>
+                            <li data-cate="<?php echo $list[$i]['type']; ?>">
+                                <div onclick="<?php echo $link; ?>">
+                                    <div class="img">
+                                        <div><?php echo $img_content; ?></div>
+                                    </div>
+                                    <div class="txt">
+                                        <h3><?php echo $list[$i]['wr_subject']; ?></h3>
+                                        <h4><?php echo $list[$i]['wr_10']; ?></h4>
+                                        <p>영업시간  <?php echo $time[0]."~".$time[1]; ?></p>
+                                        <p>주문수  <?php echo $list[$i]['wr_6']; ?>&nbsp;&nbsp;|&nbsp;&nbsp;<?php echo $list[$i]['delivery_price']; ?></p>
+                                        <p>적립&nbsp;&nbsp;현금&nbsp;<?php echo $point[0]." | ".$point[1] ;?></p>
+                                    </div>
+                                </div>
+                                <!--<a href="javascript:" class="btn bg_gray">주문하기</a><br>-->
+                                <a href="tel:<?php echo $list[$i]['wr_9'];?>" class="btn"></a>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="cart">
+        <div class="cart_count_large"><?php echo $cart_total;?></div>
+        <input type="button" class="cart_btn" value="" onclick="location.href='<?=G5_URL?>/page/mypage/cart.php';" />
+    </div>
+    <!-- Swiper JS -->
+    <script src="<?=G5_JS_URL?>/swiper.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script>
+
+        var appendNumber = 4;
+        var prependNumber = 1;
+        var swiper = new Swiper('.swiper-container', {
+            pagination: '.swiper-pagination',
+            nextButton: '.swiper-button-next',
+            prevButton: '.swiper-button-prev',
+            slidesPerView: 2,
+            centeredSlides: true,
+            paginationClickable: true,
+            spaceBetween: 10,
+            loop:true
+        });
+        document.querySelector('.prepend-2-slides').addEventListener('click', function (e) {
+            e.preventDefault();
+            swiper.prependSlide([
+                '<div class="swiper-slide">Slide ' + (--prependNumber) + '</div>',
+                '<div class="swiper-slide">Slide ' + (--prependNumber) + '</div>'
+            ]);
+        });
+        document.querySelector('.prepend-slide').addEventListener('click', function (e) {
+            e.preventDefault();
+            swiper.prependSlide('<div class="swiper-slide">Slide ' + (--prependNumber) + '</div>');
+        });
+        document.querySelector('.append-slide').addEventListener('click', function (e) {
+            e.preventDefault();
+            swiper.appendSlide('<div class="swiper-slide">Slide ' + (++appendNumber) + '</div>');
+        });
+        document.querySelector('.append-2-slides').addEventListener('click', function (e) {
+            e.preventDefault();
+            swiper.appendSlide([
+                '<div class="swiper-slide">Slide ' + (++appendNumber) + '</div>',
+                '<div class="swiper-slide">Slide ' + (++appendNumber) + '</div>'
+            ]);
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //지역선택
+            $(".opened-for-codepen li").click(function(){
+                if($(this).text!="전체보기") {
+                    loc = $(this).text();
+                }else{
+                    loc = ''
+                }
+                $(".accordion h1.loc.harf-first").html($(this).text()+'<img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow">');
+                $.ajax({
+                    url:"<?=G5_URL?>/page/ajax/ajax.index_list.php",
+                    method:"POST",
+                    data:{"loc" : loc, "order":align_type , "ca_name": ca_name, "order_type" : order_type , "searchTxt" : searchTxt}
+                }).done(function (data) {
+                    $(".rent_list ul").html(data);
+                });
+                $(this).parent().slideUp('fast');
+                $(this).parent().parent().slideUp('fast');
+            });
+
+            //지역 전체선택
+            $(".opened-for-codepen .all").click(function(){
+                loc = '';
+                $(".accordion h1.loc.harf-first").html($(this).text()+'<img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow">');
+                $.ajax({
+                    url:"<?=G5_URL?>/page/ajax/ajax.index_list.php",
+                    method:"POST",
+                    data:{"loc" : '', "order":align_type , "ca_name": ca_name, "order_type" : order_type , "searchTxt" : searchTxt}
+                }).done(function (data) {
+                    $(".rent_list ul").html(data);
+                });
+                $(this).parent().slideUp('fast');
+            });
+
+            //업종 선택
+            $(".opened-for-codepen.harf-first h2").click(function(){
+                ca_name = $(this).text();
+                if(ca_name == "전체보기")
+                    ca_name='';
+                $(".accordion h1.harf-first.center-acc").html($(this).text()+'<img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow">');
+                $.ajax({
+                    url:"<?=G5_URL?>/page/ajax/ajax.index_list.php",
+                    method:"POST",
+                    data:{"loc" : loc, "order":align_type , "ca_name": ca_name, "order_type" : order_type , "searchTxt" : searchTxt}
+                }).done(function (data) {
+                    $(".rent_list ul").html(data);
+                });
+                $(this).parent().slideUp('fast');
+            });
+
+            //주문타입
+            $(".opened-for-codepen.pay h2").click(function(){
+                order_type = $(this).text();
+                if(order_type == "전체보기")
+                    order_type = '';
+                $(".accordion h1.harf").html($(this).text()+'<img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow">');
+                $.ajax({
+                    url:"<?=G5_URL?>/page/ajax/ajax.index_list.php",
+                    method:"POST",
+                    data:{"loc" : loc, "order":align_type , "ca_name": ca_name, "order_type" : order_type , "searchTxt" : searchTxt}
+                }).done(function (data) {
+                    $(".rent_list ul").html(data);
+                });
+                $(this).parent().slideUp('fast');
+            });
+
+            //정렬
+            $("input[type=radio]").change(function(){
+                align_type = $(this).val();
+                $.ajax({
+                    url:"<?=G5_URL?>/page/ajax/ajax.index_list.php",
+                    method:"POST",
+                    data:{"loc" : loc, "order":align_type , "ca_name": ca_name, "order_type" : order_type , "searchTxt" : searchTxt}
+                }).done(function (data) {
+                    $(".rent_list ul").html(data);
+                })
+            })
+        })
+    </script>
 <?php
-include_once('./_tail.php');
+include_once(G5_PATH."/tail.php");
 ?>

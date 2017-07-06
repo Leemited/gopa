@@ -581,4 +581,16 @@ header('Cache-Control: pre-check=0, post-check=0, max-age=0'); // HTTP/1.1
 header('Pragma: no-cache'); // HTTP/1.0
 
 $html_process = new html_process();
+
+if (preg_match('/(iPhone|Android|iPod|BlackBerry|IEMobile|HTC|Server_KO_SKT|SonyEricssonX1|SKT)/',
+    $_SERVER['HTTP_USER_AGENT']) ) {
+    define('BROWSER_TYPE', 'M'); // mobile
+} else {
+    define('BROWSER_TYPE', 'W'); // web (iPad 는 웹으로 간주)
+}
+$mobile=false;
+if(BROWSER_TYPE == "M")
+{
+    $mobile=true;
+}
 ?>

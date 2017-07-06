@@ -9,7 +9,7 @@ if ($config['cf_include_index'] && is_file(G5_PATH.'/'.$config['cf_include_index
 }
 
 if (G5_IS_MOBILE) {
-    include_once(G5_MOBILE_PATH.'/index.php');
+    include_once(G5_MOBILE_PATH.'/index_old.php');
     return;
 }
 

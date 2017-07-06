@@ -52,7 +52,7 @@ if ($is_member)
 {
     $mb_id = $member['mb_id'];
     // 4.00.13 - 실명 사용일때 댓글에 닉네임으로 입력되던 오류를 수정
-    $wr_name = addslashes(clean_xss_tags($board['bo_use_name'] ? $member['mb_name'] : $member['mb_nick']));
+    //$wr_name = addslashes(clean_xss_tags($board['bo_use_name'] ? $member['mb_name'] : $member['mb_nick']));
     $wr_password = $member['mb_password'];
     $wr_email = addslashes($member['mb_email']);
     $wr_homepage = addslashes(clean_xss_tags($member['mb_homepage']));
@@ -169,15 +169,15 @@ if ($w == 'c') // 댓글 입력
 
     $comment_id = mysql_insert_id();
 
-    // 원글에 댓글수 증가 & 마지막 시간 반영
-    sql_query(" update $write_table set wr_comment = wr_comment + 1, wr_last = '".G5_TIME_YMDHIS."' where wr_id = '$wr_id' ");
+    // 원글에 댓글수 증가 & 마지막 시간 반영 & 별점 증가
+    sql_query(" update $write_table set wr_comment = wr_comment + 1, wr_last = '".G5_TIME_YMDHIS."', wr_4 = wr_4 + ".$wr_4." where wr_id = '$wr_id' ");
 
     // 새글 INSERT
     sql_query(" insert into {$g5['board_new_table']} ( bo_table, wr_id, wr_parent, bn_datetime, mb_id ) values ( '$bo_table', '$comment_id', '$wr_id', '".G5_TIME_YMDHIS."', '{$member['mb_id']}' ) ");
 
     // 댓글 1 증가
     sql_query(" update {$g5['board_table']} set bo_count_comment = bo_count_comment + 1 where bo_table = '$bo_table' ");
-
+    
     // 포인트 부여
     insert_point($member['mb_id'], $board['bo_comment_point'], "{$board['bo_subject']} {$wr_id}-{$comment_id} 댓글쓰기", $bo_table, $comment_id, '댓글');
 
@@ -278,7 +278,7 @@ else if ($w == 'cu') // 댓글 수정
             alert('자신이 관리하는 게시판이 아니므로 댓글을 수정할 수 없습니다.');
     } else if ($member['mb_id']) {
         if ($member['mb_id'] != $comment['mb_id'])
-            alert('자신의 글이 아니므로 수정할 수 없습니다.');
+            alert('자신의 글이 아니므로 수정할 수 없습니다.'." select mb_id, wr_password, wr_comment, wr_comment_reply from {$write_table} where wr_id = '{$comment_id}' ");
     } else {
         if($comment['wr_password'] != $wr_password)
             alert('댓글을 수정할 권한이 없습니다.');
@@ -327,6 +327,9 @@ else if ($w == 'cu') // 댓글 수정
 @include_once($board_skin_path.'/write_comment_update.tail.skin.php');
 
 delete_cache_latest($bo_table);
-
-goto_url('./board.php?bo_table='.$bo_table.'&amp;wr_id='.$wr['wr_parent'].'&amp;'.$qstr.'&amp;#c_'.$comment_id);
+if(!$comment_id) {
+    goto_url(G5_URL . '/page/rent/view.php?bo_table=' . $bo_table . '&amp;wr_id=' . $wr_id . '&amp;' . $qstr . '&amp;#c_' . $comment_id);
+}else{
+    goto_url(G5_URL."/page/mypage/index.php?tab=review");
+}
 ?>

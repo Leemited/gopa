@@ -40,24 +40,24 @@ header("Pragma: no-cache"); // HTTP/1.0
 <meta charset="utf-8">
 <?php
 if (G5_IS_MOBILE) {
-    echo '<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=1.0,user-scalable=yes">'.PHP_EOL;
-    echo '<meta name="HandheldFriendly" content="true">'.PHP_EOL;
-    echo '<meta name="format-detection" content="telephone=no">'.PHP_EOL;
+    echo '<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=1.0,user-scalable=yes" >'.PHP_EOL;
+    echo '<meta name="HandheldFriendly" content="true" />'.PHP_EOL;
+    echo '<meta name="format-detection" content="telephone=no" />'.PHP_EOL;
 } else {
-    echo '<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=1.0,user-scalable=yes">'.PHP_EOL;
-    echo '<meta http-equiv="X-UA-Compatible" content="IE=10,chrome=1">'.PHP_EOL;
+    echo '<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=1.0,user-scalable=yes" >'.PHP_EOL;
+    echo '<meta http-equiv="X-UA-Compatible" content="IE=edge" />'.PHP_EOL;
 }
 
 if($config['cf_add_meta'])
     echo $config['cf_add_meta'].PHP_EOL;
 ?>
-<meta name="naver-site-verification" content="cf92d99a9b4dc68aa76b0995b671c16be5e84ff7"/>
+<meta name="naver-site-verification" content="cf92d99a9b4dc68aa76b0995b671c16be5e84ff7" >
 <meta property="og:url" content="<?php echo G5_URL; ?>">
-<meta property="og:title" content="베스트렌트카">  
+<meta property="og:title" content="고파">
 <meta property="og:type" content="website">
-<meta property="og:image" content="<?php echo G5_IMG_URL."/logo1.png"; ?>">
-<meta property="og:description" content="내 차처럼 편안한 동반자 BEST RENTCAR">
-<meta name="description" content="내 차처럼 편안한 동반자 BEST RENTCAR">
+<meta property="og:image" content="<?php echo G5_IMG_URL."/logo_sample.png"; ?>">
+<meta property="og:description" content="청주지역 배달 어플">
+<meta name="description" content="청주지역 배달 어플">
 <title><?php echo $g5_head_title; ?></title>
 <?php
 if (defined('G5_IS_ADMIN')) {
@@ -66,10 +66,13 @@ if (defined('G5_IS_ADMIN')) {
     echo '<link rel="stylesheet" href="'.G5_CSS_URL.'/'.(G5_IS_MOBILE?'mobile':'default').'.css">'.PHP_EOL;
 }
 ?>
-<link rel="stylesheet" href="<?php echo G5_CSS_URL."/owl.carousel.css"; ?>" />
-<link rel="stylesheet" href="<?php echo G5_CSS_URL."/owl.theme.default.css"; ?>" />
-<link rel="stylesheet" href="<?php echo G5_CSS_URL."/style.css"; ?>" />
-<!-- 웹폰트 -->
+<link rel="shortcut icon" href="<?php echo G5_IMG_URL?>/favicon.png">
+<link rel="stylesheet" href="<?php echo G5_CSS_URL."/owl.carousel.css"; ?>" >
+<link rel="stylesheet" href="<?php echo G5_CSS_URL."/owl.theme.default.css"; ?>" >
+<link rel="stylesheet" href="<?php echo G5_CSS_URL."/style.css"; ?>" >
+<link rel="stylesheet" href="<?php echo G5_CSS_URL."/jquery-ui.css"; ?>" >
+<link rel="stylesheet" href="<?php echo G5_CSS_URL."/swiper.min.css"; ?>" >
+    <!-- 웹폰트 -->
 <link href='http://fonts.googleapis.com/earlyaccess/nanumgothic.css' rel='stylesheet' type='text/css'>
 <!--[if lt IE 9]>
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -98,10 +101,12 @@ if ($is_admin) {
 ?>
 </script>
 <script src="<?php echo G5_JS_URL ?>/jquery-1.8.3.min.js"></script>
+<script src="<?php echo G5_JS_URL ?>/jquery-ui.js"></script>
 <script src="<?php echo G5_JS_URL ?>/jquery.menu.js"></script>
 <script src="<?php echo G5_JS_URL ?>/common.js"></script>
 <script src="<?php echo G5_JS_URL ?>/wrest.js"></script>
 <script src="<?php echo G5_JS_URL ?>/script.js"></script>
+<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 <?php
 if(G5_IS_MOBILE) {
     echo '<script src="'.G5_JS_URL.'/modernizr.custom.70111.js"></script>'.PHP_EOL; // overflow scroll 감지

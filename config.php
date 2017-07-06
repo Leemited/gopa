@@ -76,6 +76,7 @@ if (isset($g5_path['path'])) {
     define('G5_PATH', '');
 }
 
+define('G5_REFERER_URL',    $_SERVER["HTTP_REFERER"]);
 define('G5_ADMIN_URL',      G5_URL.'/'.G5_ADMIN_DIR);
 define('G5_BBS_URL',        G5_URL.'/'.G5_BBS_DIR);
 define('G5_CSS_URL',        G5_URL.'/'.G5_CSS_DIR);

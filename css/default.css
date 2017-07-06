@@ -1,13 +1,11 @@
 @charset "utf-8";
 /* SIR 지운아빠 */
-@charset "utf-8";
-/* SIR 지운아빠 */
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {display:block}
+article, aside, details, figcaption, figure, footer, header, menu, nav, section {display:block}
 
 #hd ul, nav ul, #ft ul {margin:0;padding:0;list-style:none}
 legend {position:absolute;margin:0;padding:0;font-size:0;line-height:0;text-indent:-9999em;overflow:hidden}
 label, input, button, select, img {vertical-align:middle}
-input, button {margin:0;padding:0;font-family:dotum;font-size:1em}
+input, button {margin:0;padding:0;font-family: dotum, serif;font-size:1em}
 button {cursor:pointer}
 select {margin:0}
 p {margin:0;padding:0;word-break:break-all}
@@ -35,7 +33,7 @@ a:hover, a:focus, a:active {color:#000;text-decoration:underline}
 /* 전체 검색 */
 #hd_sch {float:left;margin:0 0 0 20px;padding:0;border:1px solid #c3c6ca}
 #hd_sch legend {position:absolute;margin:0;padding:0;font-size:0;line-height:0;text-indent:-9999em;overflow:hidden}
-#hd_sch #sch_stx {padding-left:5px;width:110px;height:24px;border:0;background:#fff;line-height:1.9em !important;line-height:1.6em}
+#hd_sch #sch_stx {padding-left:5px;width:110px;height:24px;border:0;background:#fff;line-height:1.9em;}
 #hd_sch #sch_submit {padding:0 5px;height:26px;border:0;background:#e2e6eb;color:#333;cursor:pointer}
 
 /* 텍스트 크기 조절 */
@@ -79,7 +77,7 @@ a:hover, a:focus, a:active {color:#000;text-decoration:underline}
 
 #aside {float:right;margin:0 0 0 -1px;width:210px;border-left:1px solid #dde4e9;background:#fff}
 
-#container {z-index:4;position:relative;float:left;padding:15px 16px 15px 15px;width:728px;min-height:500px;height:auto !important;height:500px;border-right:1px solid #dde4e9;background:#fff;font-size:1em;zoom:1}
+#container {z-index:4;position:relative;float:left;padding:15px 16px 15px 15px;width:728px;min-height:500px;height:auto;border-right:1px solid #dde4e9;background:#fff;font-size:1em;zoom:1}
 #container:after {display:block;visibility:hidden;clear:both;content:""}
 #container_title {margin-bottom:20px;font-size:1.2em;font-weight:bold}
 
@@ -277,3 +275,7 @@ a.btn_admin:focus, a.btn_admin:hover {text-decoration:none}
 /*메일인증*/
 .rg_em{margin-top:5px}
 .rg_em caption{padding:0;font-size:0;line-height:0;overflow:hidden}
+
+input:focus, a:focus, li:focus, button:focus, select:focus, textarea:focus, span:focus, div:focus{
+    outline:none !important;
+}

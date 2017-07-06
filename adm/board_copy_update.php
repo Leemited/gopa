@@ -123,7 +123,7 @@ sql_query($sql, false);
 
 // 디렉토리에 있는 파일의 목록을 보이지 않게 한다.
 $board_path = G5_DATA_PATH.'/file/'.$target_table;
-$file = $board_path . '/index.php';
+$file = $board_path . '/index_old.php';
 $f = @fopen($file, 'w');
 @fwrite($f, '');
 @fclose($f);

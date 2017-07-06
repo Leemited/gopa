@@ -1,107 +1,623 @@
 <?php
 	include_once("../../common.php");
-	$back_url=G5_URL."/page/rent/list.php";
-	include_once(G5_PATH."/head.php");
-	if(!$type){
-		$type="short";
-	}
-	$best_tel=sql_fetch("select * from `best_tel`");
-	$view=sql_fetch("select * from best_model where id='{$model}'");
-	if($is_member){
-		$link="javascript:location.href='".G5_URL."/page/rent/reserve_form.php?model=".$model."&type=".$type."';";
-	}else{
-		$link="javascript:location.href='".G5_URL."/page/rent/reserve_form_login.php?model=".$model."&type=".$type."';";
-	}
+	if(!$tab) {
+        $back_url = G5_URL . "/index.php";
+    }else{
+	    $back_url = G5_REFERER_URL;
+    }
+	$bo_table="main";
+	$view=sql_fetch("select a.*,b.* from `g5_write_main` as a left join `store_detail` as b on a.wr_id = b.wr_id where a.wr_id='{$wr_id}' ");
+	$menu=sql_fetch("select * from `store_menu` where wr_id='{$wr_id}'");
+
+	$banner_row=sql_query("select * from `best_partner`");
+
+    $cmt=sql_query("select a.*,b.*,a.wr_name as name from `g5_write_main` as a left join `g5_member` as b on a.wr_name = b.mb_name  a.wr_email = b.mb_id where a.wr_is_comment=1 and a.wr_parent ='{$wr_id}' ");
+
+    $fav=sql_fetch("select id from `mypage_favorite` where mb_id = {$member['mb_no']} and wr_id = {$wr_id}");
+
+    $file = get_file("main", $wr_id);
+    $even = $view['wr_comment'];
+    if($even==0){
+        $rank_total = $view["wr_4"];
+    }else {
+        $rank_total = ceil($view["wr_4"] / $even);
+    }
+	switch ( $rank_total){
+        case "5":
+            $rank = "★★★★★";
+            break;
+        case "4":
+            $rank = "★★★★☆";
+            break;
+        case "3":
+            $rank = "★★★☆☆";
+            break;
+        case "2":
+            $rank = "★★☆☆☆";
+            break;
+        case "1":
+            $rank = "★☆☆☆☆";
+            break;
+        case "0":
+            $rank = "☆☆☆☆☆";
+            break;
+    }
+    $wr_subject=$view["wr_subject"];
+include_once(G5_PATH."/head.php");
+
 ?>
-	<div class="width-fixed">
-		<section class="section01">
-			<header class="section01_header">
-				<h1><?php $type=="short"?"단기대여":"장기대여"; ?></h1>
-				<h3 class="<?php echo $type=="short"?"rent_list_head":"long_head"; ?>"></h3>
-				<p>예약 후 1시간 이내에 연락드리겠습니다.</p>
-			</header>
-			<div class="section01_content">
-				<div id="rent_view">
-					<div class="top">
-						<div class="img">
-							<div>
-								<img src="<?php echo G5_DATA_URL."/model/".$view['photo']; ?>" alt="<?php echo $view['name']; ?>" />
-							</div>
-						</div>
-						<div class="info">
-							<h1><?php echo $view['name']; ?></span><span><?php echo $view['type']; ?></span></h1>
-							<p><?php echo $view['fuel']; ?>&nbsp;&nbsp;|&nbsp;&nbsp;<?php echo $view['gear']; ?>&nbsp;&nbsp;|&nbsp;&nbsp;<?php echo $view['year']; ?></p>
-							<span class="type"><?php echo $view['type']; ?></span>
-							<div class="m_img">
-								<div>
-									<img src="<?php echo G5_DATA_URL."/model/".$view['photo']; ?>" alt="<?php echo $view['name']; ?>" />
-								</div>
-							</div>
-							
-							<div class="price">
-							<?php if($type!="long" && $view['day_pay']!=0){ ?>
-								<h4>1일<span><?php echo number_format($view['day_pay']); ?></span></h4>
-								<h4 class="last">시간당<span><?php echo number_format($view['hour_pay']); ?></span></h4>
-							<?php } ?>
-							</div>
-							<a href="<?php echo $link; ?>">예약하기</a>
-						</div>
-					</div>
-					<div class="bottom">
-						<div class="detail">
-							<h2>상세정보</h2>
-							<div class="table02">
-								<table>
-									<tr>
-										<th>연식</th>
-										<td class="bdr"><?php echo $view['year']?$view['year']:"-"; ?></td>
-										<th>연료</th>
-										<td><?php echo $view['fuel']?$view['fuel']:"-"; ?></td>
-									</tr>
-									<tr>
-										<th>연비</th>
-										<td class="bdr"><?php echo $view['mileage']?$view['mileage']:"-"; ?></td>
-										<th>인원</th>
-										<td><?php echo $view['seater']?$view['seater']:"-"; ?></td>
-									</tr>
-									<tr>
-										<th>변속기</th>
-										<td class="bdr"><?php echo $view['gear']?$view['gear']:"-"; ?></td>
-										<th>배기량</th>
-										<td><?php echo $view['displacement']?$view['displacement']:"-"; ?></td>
-									</tr>
-									<tr>
-										<th>색상</th>
-										<td class="bdr"><?php echo $view['color']?$view['color']:"-"; ?></td>
-										<th>옵션</th>
-										<td><?php echo $view['option']?$view['option']:"-"; ?></td>
-									</tr>
-								</table>
-							</div>
-						</div>
-						<div class="con">
-							<div>
-								<?php if($type=="long"){ echo "만21세.만26세 이상 / 면허취득 1년이상<br />본 차량은 종합보험 및 자차포함 된 가격 입니다.<br />".$view['content'];}else{ echo $view['content']?$view['content']:"-";} ?>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-		<div class="sub_call_pop">
-			<div class="top">
-				<i></i>
-				<div>
-					<h3>빠르고 간편한</h3>
-					<h2>전화예약</h2>
-				</div>
-			</div>
-			<div class="bottom">
-				<h1><?php echo dot_hp_number($best_tel['tel']); ?></h1>
-				<p><?php if(!$best_tel['all']){ echo date("A h:i",strtotime($best_tel['time1'])); ?> ~ <?php echo date("A h:i",strtotime($best_tel['time2'])); ?><?php }else{ ?>연중무휴 24시간 영업<?php } ?></p>
-			</div>
-		</div>
+	<div class="width-fixed view">
+		<section class="section01 <?php if($view['wr_7']!=1){?> padding_b_30 <?php }else{?> padding_b_10<?php }?>" id="view_section">
+			<div id="view-slide" class="owl-carousel">
+                <?php
+                for($i=1;$i<count($file)-1;$i++){
+                ?>
+                <div class="item"><img src="<?php echo G5_DATA_URL."/file/main/".$file[$i]['file']; ?>" alt=""></div>
+                <?php } ?>
+            </div>
+            <div class="section01_content">
+                <div>
+                    <h1><?php echo $view["wr_subject"];?></h1>
+                    <p><?php echo $view["ca_name"];?></p>
+                    <span><?php echo $rank;?></span><span class="score"><?php echo $rank_total; ?></span>
+                </div>
+                <?php if($view['wr_7']!=1){?>
+                <ul class="ul_btn">
+                    <li class="call" onclick="location.href='tel:<?=$view["wr_9"]?>';">전화하기</li>
+                    <li class="share" onclick="fnShare('<?=$wr_id?>')">공유하기</li>
+                    <li class="map" onclick="moveLink('map','<?=$view['wr_10']?>')">지도보기</li>
+                </ul>
+                <div class="clear"></div>
+                <?php } ?>
+            </div>
+        </section>
+        <?php if($view['wr_7']==1){?>
+        <section class="section01" id="view_section_info">
+            <div class="section01_header">
+                <div><h2>찾아오는길</h2><span><a href="javascript:moveLink('map','<?=$view['wr_10']?>')">크게보기 ></a></span></div>
+            </div>
+            <div class="section01_content">
+                <div id="map" class="maps"></div>
+            </div>
+            <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=lJdKVDD2UykKU2mvfhch&submodules=geocoder"></script>
+            <script>
+                $("#map").css("height", "200px");
+
+                var map = new naver.maps.Map('map');
+                var myaddress = '<?=$view['wr_10']?>';// 도로명 주소나 지번 주소만 가능 (건물명 불가!!!!)
+                naver.maps.Service.geocode({address: myaddress}, function(status, response) {
+                    if (status !== naver.maps.Service.Status.OK) {
+                        return alert(myaddress + '의 검색 결과가 없거나 기타 네트워크 에러');
+                    }
+                    var result = response.result;
+                    // 검색 결과 갯수: result.total
+                    // 첫번째 결과 결과 주소: result.items[0].address
+                    // 첫번째 검색 결과 좌표: result.items[0].point.y, result.items[0].point.x
+                    var myaddr = new naver.maps.Point(result.items[0].point.x, result.items[0].point.y);
+                    map.setCenter(myaddr); // 검색된 좌표로 지도 이동
+                    // 마커 표시
+                    map.setZoom(13);
+                    var marker = new naver.maps.Marker({
+                        position: myaddr,
+                        map: map,
+                    });
+                    // 마커 클릭 이벤트 처리
+                    naver.maps.Event.addListener(marker, "click", function(e) {
+                        if (infowindow.getMap()) {
+                            infowindow.close();
+                        } else {
+                            infowindow.open(map, marker);
+                        }
+                    });
+                });
+            </script>
+        </section>
+        <?php } ?>
+		<section class="section01" id="view_section_info">
+            <div class="section01_header">
+                <div><h2>매장정보</h2><span><a href="<?=G5_URL?>/page/rent/view_detail.php?wr_id=<?=$wr_id?>&wr_subject=<?=$wr_subject?>">더보기 ></a></span></div>
+            </div>
+            <div class="section01_content">
+                <?php if($view['wr_7']==1){?>
+                    <img src="<?php echo G5_DATA_URL?>/file/main/<?php echo $view["etc3"];?>" alt="이미지">
+                <?php }?>
+                <dl>
+                    <dt>전화번호</dt>
+                    <dd><?=$view["wr_9"]?></dd>
+                    <dt>주소</dt>
+                    <dd><?=$view["wr_10"]?></dd>
+                    <dt>운영시간</dt>
+                    <dd><?=$view["wr_5"]?></dd>
+                    <dt>휴무</dt>
+                    <dd><?=$view["wr_9"]?></dd>
+                    <dt>소개</dt>
+                    <dd><?=$view["wr_content"]?></dd>
+                </dl>
+            </div>
+        </section>
+		<section class="section01 clear" id="view_section_banner">
+            <div class="owl-carousel">
+                <?php
+                for($i=0;$banner=sql_fetch_array($banner_row);$i++){
+                    ?>
+                    <div class="item"><img src="<?php echo G5_DATA_URL."/partner/".$banner['banner']; ?>" alt=""></div>
+                <?php } ?>
+            </div>
+        </section>
+        <?php if($view['wr_7']!=1){?>
+		<section class="section01" id="view_section_menu">
+            <div class="accordion">
+                <?php
+                $cate = explode(",", $menu["ca_name"]);
+                $menu_name = explode(":", $menu["menu_name"]);
+                $menu_detail = explode(":",$menu["menu_detail"]);
+                $price = explode(":", $menu["menu_price"]);
+                for($i=0; $i < count($cate); $i++){
+                ?>
+                <h1><?=$cate[$i]?> <img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow"></h1>
+                <ul class="opened-for-codepen" >
+                    <?php
+                    $menu_title=explode(",",$menu_name[$i]);
+                    $menu_price=explode(",",$price[$i]);
+                    $detail = explode(",",$menu_detail[$i]);
+                    for($j=0;$j<count($menu_title);$j++){
+                    ?>
+                    <li class="item" style="background-color:#fff;text-align: left;position:relative;padding:5px 0;">
+                        <h2 style="text-align:left;border-bottom:none;padding-left:10px;" id="menu_title"><?=$menu_title[$j]?></h2>
+                        <?php if($detail[$j]){ echo "<label style='font-size: 12px;color: #555;font-weight: normal;position: relative;left: 10px;top: -13px;'>".$detail[$j]."</label>" ; }?>
+                        <label for="menu_title" style="position: absolute;right:10px;top:19px;" class="price"><?=number_format($menu_price[$j])?> 원</label>
+                    </li>
+                    <?php
+                    }
+                    ?>
+                </ul>
+                <?php
+                }
+                ?>
+            </div>
+            <div class="clear"></div>
+        </section>
+        <?php }else{ ?>
+        <section class="section01" id="view_section_menu">
+            <ul class="accordion">
+                <?php
+                $cate = explode(",", $menu["ca_name"]);
+                $menu_name = explode(":", $menu["menu_name"]);
+                $menu_detail = explode(":",$menu["menu_detail"]);
+                $price = explode(":", $menu["menu_price"]);
+                for($i=0; $i < count($cate); $i++){
+                    ?>
+                    <h1><?=$cate[$i]?> <img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow"></h1>
+                    <ul class="opened-for-codepen" >
+                        <?php
+                        $menu_title=explode(",",$menu_name[$i]);
+                        $menu_price=explode(",",$price[$i]);
+                        $detail = explode(",",$menu_detail[$i]);
+                        for($j=0;$j<count($menu_title);$j++){
+
+                            ?>
+                            <li class="item" style="background-color:#fff;text-align: left;position:relative;padding:5px 0;min-height:60px">
+                                <div style="width:90px;padding:0 5px;position: absolute;left:0;height:60px;display: block"><img src="../../img/no_img.png" alt="" style="height: 100%;text-align: center;display: block;"></div>
+                                <h2 style="text-align:left;border-bottom:none;padding:9px 0px 9px 100px;" id="menu_title"><?=$menu_title[$j]?></h2>
+                                <?php if($detail[$j]){ echo "<span style='font-size: 12px;color: #555;font-weight: normal;position: relative;left: 100px;top: -6px;'>".$detail[$j]."</span>" ; }?>
+                                <label for="menu_title" style="position: absolute;right:10px;top:14px;" class="price"><?=number_format($menu_price[$j])?> 원</label>
+                            </li>
+                            <?php
+                        }
+                        ?>
+                    </ul>
+                    <?php
+                }
+                ?>
+            </div>
+            <div class="clear"></div>
+        </section>
+        <?php } ?>
+        <?php if($is_member){?>
+		<section class="section01" id="view_section">
+            <div class="section01_header">
+                <div><h2>리뷰</h2></div>
+            </div>
+            <div class="section01_content">
+                <input type="button" value="리뷰 블라인드 처리 기준을 확인해주세요" class="review_info_btn" onclick="fnReviewGuide();">
+                <div class="user">
+                    <img src="<?php if($member["mb_sex"] == "남"){ echo G5_IMG_URL."/mypage_man_icon.png";}else{ echo G5_IMG_URL."/mypage_woman_icon.png";} ?>" alt="" id="userIcon"><label for="userIcon"><?=$member["mb_name"];?></label>
+                </div>
+                <div id="bo_vc_w">
+                <form name="fviewcomment" action="<?php echo G5_BBS_URL."/write_comment_update.php";?>" onsubmit="return fviewcomment_submit(this);" method="post" autocomplete="off">
+                    <input type="hidden" name="w" value="c" id="w">
+                    <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
+                    <input type="hidden" name="wr_id" value="<?php echo $wr_id ?>">
+                    <input type="hidden" name="comment_id" value="<?php echo $c_id ?>" id="comment_id">
+                    <input type="hidden" name="sca" value="<?php echo $sca ?>">
+                    <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
+                    <input type="hidden" name="stx" value="<?php echo $stx ?>">
+                    <input type="hidden" name="spt" value="<?php echo $spt ?>">
+                    <input type="hidden" name="page" value="<?php echo $page ?>">
+                    <input type="hidden" name="is_good" value="">
+                    <input type="hidden" name="wr_name" value="<?php echo $member["mb_name"];?>">
+                    <div class="rank">
+                        <select name="wr_4" id="wr_4" >
+                            <option value="5">★★★★★</option>
+                            <option value="4">★★★★☆</option>
+                            <option value="3">★★★☆☆</option>
+                            <option value="2">★★☆☆☆</option>
+                            <option value="1">★☆☆☆☆</option>
+                            <option value="0">☆☆☆☆☆</option>
+                        </select>
+                    </div>
+                    <div class="tbl_frm01 tbl_wrap">
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <?php if ($comment_min || $comment_max) { ?><strong id="char_cnt"><span id="char_count"></span>글자</strong><?php } ?>
+                                    <textarea id="wr_content" name="wr_content" maxlength="10000" required class="required" title="내용"
+                                              <?php if ($comment_min || $comment_max) { ?>onkeyup="check_byte('wr_content', 'char_count');"<?php } ?>><?php echo $c_wr_content;  ?></textarea>
+                                    <?php if ($comment_min || $comment_max) { ?><script> check_byte('wr_content', 'char_count'); </script><?php } ?>
+                                    <script>
+                                        $("textarea#wr_content[maxlength]").live("keyup change", function() {
+                                            var str = $(this).val()
+                                            var mx = parseInt($(this).attr("maxlength"))
+                                            if (str.length > mx) {
+                                                $(this).val(str.substr(0, mx));
+                                                return false;
+                                            }
+                                        });
+                                    </script>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="btn_confirm">
+                        <input type="submit" id="btn_submit" class="btn_submit" value="리뷰작성">
+                    </div>
+                </form>
+                </div>
+                <div class="reply_view">
+                    <?php
+                    for($i=0;$row=sql_fetch_array($cmt);$i++){
+                        switch ($row["wr_4"]){
+                            case "5":
+                                $reply_rank = "★★★★★";
+                                break;
+                            case "4":
+                                $reply_rank = "★★★★☆";
+                                break;
+                            case "3":
+                                $reply_rank = "★★★☆☆";
+                                break;
+                            case "2":
+                                $reply_rank = "★★☆☆☆";
+                                break;
+                            case "1":
+                                $reply_rank = "★☆☆☆☆";
+                                break;
+                            case "0":
+                                $reply_rank = "☆☆☆☆☆";
+                                break;
+                        }
+
+                    ?>
+                        <div class="reply <?php if($i==0){ echo "first";}?>">
+                            <div class="reply_content">
+                                <img src="<?php if($row["mb_sex"] == "남"){ echo G5_IMG_URL."/mypage_man_icon.png";}else{ echo G5_IMG_URL."/mypage_woman_icon.png";} ?>" alt="" id="userIcon"><label
+                                        for="userIcon"><?=$row["name"]?></label>
+                                <div><span><?php echo $reply_rank;?></span></div>
+                                <p><?php echo $row['wr_content']; ?></p>
+                                <!--<div class="reply_edit">
+                                    <a href="<?/*=G5_URL*/?>/page/rent/view.php?bo_table=main&wr_id=<?/*=$wr_id*/?>&c_id=<?/*=$cmt['wr_id']*/?>&w=cu#bo_vc_w" onclick="comment_box('<?/*=$wr_id*/?>', 'cu')">수정</a> | 삭제
+                                </div>-->
+                            </div>
+                        </div>
+                    <?php
+                    }
+                    ?>
+                </div>
+            </div>
+        </section>
+        <?php }?>
+        <section class="section01" id="view_section" <?php if($view['wr_7']==1){?>style="margin-bottom:55px;"<?php }?>>
+            <div class="error_info" style="padding:10px 0;text-align:center;font-size:14px;color: #333;margin:5px 5px;border:2px solid #ddd;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;"><span></span>잘못된정보가 있나요? <a href="">수정요청</a></div>
+        </section>
+        <?php if($view['wr_7']==1){?>
+        <section class="section01" id="view_section" style="position:fixed;bottom:0;margin-bottom:0;z-index:99999">
+            <div class="section01_content">
+                <ul class="premium">
+                    <li class="first" onclick="location.href='tel:<?=$view["wr_9"];?>'">전화</li>
+                    <li onclick="fnShare('<?=$wr_id?>')">공유</li>
+                </ul>
+            </div>
+        </section>
+        <?php }?>
 	</div>
+    <script src="<?php echo G5_JS_URL ?>/owl.carousel.js"></script>
+    <script>
+
+        $(".owl-carousel").owlCarousel({
+            animateOut: 'fadeOut',
+            autoplay:true,
+            autoplayTimeout:5000,
+            autoplaySpeed:2000,
+            smartSpeed:2000,
+            loop:true,
+            dots:true,
+            items:1
+        });
+
+        function fnShare(id){
+            $.post(g5_url+"/page/modal/share.php",{id:id},function(data){
+                $(".modal").html(data);
+                modal_active();
+            });
+        }
+        function fnReviewGuide(){
+            $.post(g5_url+"/page/modal/review_guide.php",function(data){
+                $(".modal").html(data);
+                modal_active();
+            });
+        }
+        $(document).ready(function(){
+            $("li.item").click(function(){
+                var menu = $(this).find($("h2")).text();
+                var price = $(this).find($("label.price")).text().replace(" 원","");
+                price = price.replace(",","");
+                $.post(g5_url+"/page/modal/cart_add.php",{"menu":menu,"price":price,"id":"<?=$menu["id"]?>"},function(data){
+                    $(".modal").html(data);
+                    modal_active();
+                });
+            });
+            var check_id = "<?=$fav['id']?>";
+            if(check_id != ""){
+                $("span[class^=mobile_favorite_btn]").toggle();
+            }
+            $("span[class^=mobile_favorite_btn]").click(function(){
+                $("span[class^=mobile_favorite_btn]").toggle();
+                var name = $(this).attr("class");
+                if(name == "mobile_favorite_btn"){
+                    $.ajax({
+                        url:"<?=G5_URL?>/page/mypage/ajax.favorite_update.php",
+                        method:"POST",
+                        data:{"wr_id":'<?=$wr_id?>',"mode":"add","mb_id":'<?=$member["mb_no"]?>'}
+                    }).done(function(data){
+                        switch (data){
+                            case "0":
+                                alert("로그인 회원만 사용 할 수 있습니다.\r\n로그인 후 이용바랍니다.");
+                                $("span[class^=mobile_favorite_btn]").toggle();
+                                break;
+                            case "1":
+                                alert("이미 추가 되어 있습니다.");
+                                break;
+                            case "2":
+                                alert('추가 되었습니다.');
+                                break;
+                            case "3":
+                                alert("추가 오류입니다. \r\n관리자에게 문의하시기 바랍니다.");
+                                break;
+                        }
+                    })
+                }else{
+                    $.ajax({
+                        url:"<?=G5_URL?>/page/mypage/ajax.favorite_update.php",
+                        method:"POST",
+                        data:{"wr_id":'<?=$wr_id?>',"mode":"del","mb_id":'<?=$member["mb_no"]?>'}
+                    }).done(function(data){
+                        switch (data){
+                            case "2":
+                                alert('삭제 되었습니다.');
+                                break;
+                            case "3":
+                                alert("삭제 오류입니다. \r\n관리자에게 문의하시기 바랍니다.");
+                                break;
+                        }
+                    })
+                }
+            });
+
+        })
+
+    </script>
+    <script>
+        var save_before = '';
+        var save_html = document.getElementById('bo_vc_w').innerHTML;
+
+        function good_and_write()
+        {
+            var f = document.fviewcomment;
+            if (fviewcomment_submit(f)) {
+                f.is_good.value = 1;
+                f.submit();
+            } else {
+                f.is_good.value = 0;
+            }
+        }
+
+        function fviewcomment_submit(f)
+        {
+            var pattern = /(^\s*)|(\s*$)/g; // \s 공백 문자
+
+            f.is_good.value = 0;
+
+            var subject = "";
+            var content = "";
+            $.ajax({
+                url: g5_bbs_url+"/ajax.filter.php",
+                type: "POST",
+                data: {
+                    "subject": "",
+                    "content": f.wr_content.value
+                },
+                dataType: "json",
+                async: false,
+                cache: false,
+                success: function(data, textStatus) {
+                    subject = data.subject;
+                    content = data.content;
+                }
+            });
+
+            if (content) {
+                alert("내용에 금지단어('"+content+"')가 포함되어있습니다");
+                f.wr_content.focus();
+                return false;
+            }
+
+            // 양쪽 공백 없애기
+            var pattern = /(^\s*)|(\s*$)/g; // \s 공백 문자
+            document.getElementById('wr_content').value = document.getElementById('wr_content').value.replace(pattern, "");
+            if (char_min > 0 || char_max > 0)
+            {
+                check_byte('wr_content', 'char_count');
+                var cnt = parseInt(document.getElementById('char_count').innerHTML);
+                if (char_min > 0 && char_min > cnt)
+                {
+                    alert("댓글은 "+char_min+"글자 이상 쓰셔야 합니다.");
+                    return false;
+                } else if (char_max > 0 && char_max < cnt)
+                {
+                    alert("댓글은 "+char_max+"글자 이하로 쓰셔야 합니다.");
+                    return false;
+                }
+            }
+            else if (!document.getElementById('wr_content').value)
+            {
+                alert("댓글을 입력하여 주십시오.");
+                return false;
+            }
+
+            if (typeof(f.wr_name) != 'undefined')
+            {
+                f.wr_name.value = f.wr_name.value.replace(pattern, "");
+                if (f.wr_name.value == '')
+                {
+                    alert('이름이 입력되지 않았습니다.');
+                    f.wr_name.focus();
+                    return false;
+                }
+            }
+
+            if (typeof(f.wr_password) != 'undefined')
+            {
+                f.wr_password.value = f.wr_password.value.replace(pattern, "");
+                if (f.wr_password.value == '')
+                {
+                    alert('비밀번호가 입력되지 않았습니다.');
+                    f.wr_password.focus();
+                    return false;
+                }
+            }
+
+
+
+            document.getElementById("btn_submit").disabled = "disabled";
+
+            return true;
+        }
+
+        function comment_box(comment_id, work)
+        {
+            var el_id;
+            // 댓글 아이디가 넘어오면 답변, 수정
+            if (comment_id)
+            {
+                if (work == 'c')
+                    el_id = 'reply_' + comment_id;
+                else
+                    el_id = 'edit_' + comment_id;
+            }
+            else
+                el_id = 'bo_vc_w';
+
+            if (save_before != el_id)
+            {
+                if (save_before)
+                {
+                    document.getElementById(save_before).style.display = 'none';
+                    document.getElementById(save_before).innerHTML = '';
+                }
+
+                document.getElementById(el_id).style.display = '';
+                document.getElementById(el_id).innerHTML = save_html;
+                // 댓글 수정
+                if (work == 'cu')
+                {
+                    document.getElementById('wr_content').value = document.getElementById('save_comment_' + comment_id).value;
+                    if (typeof char_count != 'undefined')
+                        check_byte('wr_content', 'char_count');
+                    if (document.getElementById('secret_comment_'+comment_id).value)
+                        document.getElementById('wr_secret').checked = true;
+                    else
+                        document.getElementById('wr_secret').checked = false;
+                }
+
+                document.getElementById('comment_id').value = comment_id;
+                document.getElementById('w').value = work;
+
+                if(save_before)
+                    $("#captcha_reload").trigger("click");
+
+                save_before = el_id;
+            }
+        }
+
+        function comment_delete()
+        {
+            return confirm("이 댓글을 삭제하시겠습니까?");
+        }
+
+        comment_box('', 'c'); // 댓글 입력폼이 보이도록 처리하기위해서 추가 (root님)
+
+        <?php if($board['bo_use_sns'] && ($config['cf_facebook_appid'] || $config['cf_twitter_key'])) { ?>
+        // sns 등록
+        $(function() {
+            $("#bo_vc_send_sns").load(
+                "<?php echo G5_SNS_URL; ?>/view_comment_write.sns.skin.php?bo_table=<?php echo $bo_table; ?>",
+                function() {
+                    save_html = document.getElementById('bo_vc_w').innerHTML;
+                }
+            );
+        });
+        <?php } ?>
+    </script>
+    <script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
+    <script type='text/javascript'>
+        //<![CDATA[
+        // // 사용할 앱의 JavaScript 키를 설정해 주세요.
+        Kakao.init('c98e87699f92ad0673759ad55b12cc50');
+        // // 카카오링크 버튼을 생성합니다. 처음 한번만 호출하면 됩니다.
+        function sendLink() {
+            Kakao.Link.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: '<?=$view['wr_subject']?>',
+                    imageUrl: '<?=G5_DATA_URL?>/file/main/<?=$file[0]['file']?>',
+                    link: {
+                        mobileWebUrl: '<?=G5_URL?>/page/rent/view.php?wr_id=<?=$wr_id?>&wr_subject=<?=$view["wr_subject"]?>',
+                        webUrl: '<?=G5_URL?>/page/rent/view.php?wr_id=<?=$wr_id?>&wr_subject=<?=$view["wr_subject"]?>'
+                    }
+                },
+                buttons: [
+                    {
+                        title: '웹으로 보기',
+                        link: {
+                            mobileWebUrl: '<?=G5_URL?>/page/rent/view.php?wr_id=<?=$wr_id?>&wr_subject=<?=$view["wr_subject"]?>',
+                            webUrl: '<?=G5_URL?>/page/rent/view.php?wr_id=<?=$wr_id?>&wr_subject=<?=$view["wr_subject"]?>'
+                        }
+                    },
+                    {
+                        title: '앱으로 보기',
+                        link: {
+                            mobileWebUrl: '<?=G5_URL?>/page/rent/view.php?wr_id=<?=$wr_id?>&wr_subject=<?=$view["wr_subject"]?>',
+                            webUrl: '<?=G5_URL?>/page/rent/view.php?wr_id=<?=$wr_id?>&wr_subject=<?=$view["wr_subject"]?>'
+                        }
+                    }
+                ]
+            });
+        }
+        //]]>
+    </script>
 <?php
 	include_once(G5_PATH."/tail.php");
 ?>
