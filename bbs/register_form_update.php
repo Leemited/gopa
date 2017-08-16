@@ -4,8 +4,6 @@ include_once(G5_CAPTCHA_PATH.'/captcha.lib.php');
 include_once(G5_LIB_PATH.'/register.lib.php');
 include_once(G5_LIB_PATH.'/mailer.lib.php');
 
-
-
 // 리퍼러 체크
 referer_check();
 
@@ -42,8 +40,8 @@ $mb_birth       = isset($_POST['mb_birth'])         ? trim($_POST['mb_birth'])  
 $mb_homepage    = isset($_POST['mb_homepage'])      ? trim($_POST['mb_homepage'])    : "";
 $mb_tel         = isset($_POST['mb_tel'])           ? trim($_POST['mb_tel'])         : "";
 $mb_hp          = isset($_POST['mb_hp'])            ? trim($_POST['mb_hp'])          : "";
-$mb_zip1        = isset($_POST['mb_zip'])           ? substr(trim($_POST['mb_zip']), 0, 3) : "";
-$mb_zip2        = isset($_POST['mb_zip'])           ? substr(trim($_POST['mb_zip']), 3)    : "";
+$mb_zip1        = isset($_POST['mb_zip1'])           ? trim($_POST['mb_zip1'])         : "";
+$mb_zip2        = isset($_POST['mb_zip2'])           ? trim($_POST['mb_zip2'])         : "";
 $mb_addr1       = isset($_POST['mb_addr1'])         ? trim($_POST['mb_addr1'])       : "";
 $mb_addr2       = isset($_POST['mb_addr2'])         ? trim($_POST['mb_addr2'])       : "";
 $mb_addr3       = isset($_POST['mb_addr3'])         ? trim($_POST['mb_addr3'])       : "";
@@ -62,9 +60,25 @@ $mb_6           = isset($_POST['mb_6'])             ? trim($_POST['mb_6'])      
 $mb_7           = isset($_POST['mb_7'])             ? trim($_POST['mb_7'])           : "";
 $mb_8           = isset($_POST['mb_8'])             ? trim($_POST['mb_8'])           : "";
 $mb_9           = isset($_POST['mb_9'])             ? trim($_POST['mb_9'])           : "";
-$mb_10          = isset($_POST['mb_10'])            ? trim($_POST['mb_10'])           : "";
+$mb_10          = isset($_POST['mb_10'])            ? trim($_POST['mb_10'])          : "";
 $regid          = isset($_POST['regid'])            ? trim($_POST['regid'])          : "";
-$off_gcm        = isset($_POST['off_gcm'])          ? trim($_POST['off_gcm'])          : "";
+$off_gcm        = isset($_POST['off_gcm'])          ? trim($_POST['off_gcm'])        : "";
+$shop_name      = isset($_POST['shop_name'])        ? trim($_POST['shop_name'])      : "";
+$shop_hp        = isset($_POST['shop_hp'])          ? trim($_POST['shop_hp'])        : "";
+$shop_zip       = isset($_POST['shop_zip1'])         ? trim($_POST['shop_zip1'])       : "";
+$shop_addr1     = isset($_POST['shop_addr1'])       ? trim($_POST['shop_addr1'])     : "";
+$shop_addr2     = isset($_POST['shop_addr2'])       ? trim($_POST['shop_addr2'])     : "";
+$shop_cate      = isset($_POST['shop_cate'])        ? trim($_POST['shop_cate'])      : "";
+$shop_number    = isset($_POST['shop_number'])      ? trim($_POST['shop_number'])    : "";
+$shop_homepage  = isset($_POST['shop_homepage'])      ? trim($_POST['shop_homepage'])    : "";
+$shop_bank      = isset($_FILES['shop_bank'])       ? $_FILES['shop_bank']['tmp_name']           : "";
+$shop_marketing = isset($_FILES['shop_marketing'])  ? $_FILES['shop_marketing']['tmp_name']      : "";
+
+if($type=="shop"){
+    $mb_level = 5;
+}else{
+    $mb_level = $config['cf_register_level'];
+}
 
 if ($w == '' || $w == 'u') {
 
@@ -77,7 +91,7 @@ if ($w == '' || $w == 'u') {
     if($w == '' && $mb_password != $mb_password_re)
         alert('비밀번호가 일치하지 않습니다.');
 
-    //if ($msg = empty_mb_name($mb_name))       alert($msg, "", true, true);
+    if ($msg = empty_mb_name($mb_name))       alert($msg, "", true, true);
     //if ($msg = empty_mb_nick($mb_nick))     alert($msg, "", true, true);
     if ($msg = empty_mb_email($mb_email))   alert($msg, "", true, true);
     if ($msg = reserve_mb_id($mb_id))       alert($msg, "", true, true);
@@ -160,7 +174,7 @@ if ($config['cf_cert_use'] && $cert_type && $md5_cert_no) {
         $sql_certify .= " , mb_certify  = '{$cert_type}' ";
         $sql_certify .= " , mb_adult = '{$_SESSION['ss_cert_adult']}' ";
         $sql_certify .= " , mb_birth = '{$_SESSION['ss_cert_birth']}' ";
-        $sql_certify .= " , mb_sex = '{$_SESSION['ss_cert_sex']}' ";
+        //$sql_certify .= " , mb_sex = '{$_SESSION['ss_cert_sex']}' ";
         $sql_certify .= " , mb_dupinfo = '{$_SESSION['ss_cert_dupinfo']}' ";
         if($w == 'u')
             $sql_certify .= " , mb_name = '{$mb_name}' ";
@@ -169,7 +183,7 @@ if ($config['cf_cert_use'] && $cert_type && $md5_cert_no) {
         $sql_certify .= " , mb_certify  = '' ";
         $sql_certify .= " , mb_adult = 0 ";
         $sql_certify .= " , mb_birth = '' ";
-        $sql_certify .= " , mb_sex = '' ";
+        //$sql_certify .= " , mb_sex = '' ";
     }
 } else {
     if (get_session("ss_reg_mb_name") != $mb_name || get_session("ss_reg_mb_hp") != $mb_hp) {
@@ -177,7 +191,7 @@ if ($config['cf_cert_use'] && $cert_type && $md5_cert_no) {
         $sql_certify .= " , mb_certify = '' ";
         $sql_certify .= " , mb_adult = 0 ";
         $sql_certify .= " , mb_birth = '' ";
-        $sql_certify .= " , mb_sex = '' ";
+        //$sql_certify .= " , mb_sex = '' ";
     }
 }
 //===============================================================
@@ -204,7 +218,7 @@ if ($w == '') {
                      mb_today_login = '".G5_TIME_YMDHIS."',
                      mb_datetime = '".G5_TIME_YMDHIS."',
                      mb_ip = '{$_SERVER['REMOTE_ADDR']}',
-                     mb_level = '{$config['cf_register_level']}',
+                     mb_level = '{$mb_level}',
                      mb_recommend = '{$mb_recommend}',
                      mb_login_ip = '{$_SERVER['REMOTE_ADDR']}',
                      mb_mailling = '{$mb_mailling}',
@@ -223,7 +237,6 @@ if ($w == '') {
                      mb_10 = '{$mb_10}',
                      regid = '{$regid}'
                      {$sql_certify} ";
-
     // 이메일 인증을 사용하지 않는다면 이메일 인증시간을 바로 넣는다
     if (!$config['cf_use_email_certify'])
         $sql .= " , mb_email_certify = '".G5_TIME_YMDHIS."' ";
@@ -235,6 +248,41 @@ if ($w == '') {
     // 추천인에게 포인트 부여
     if ($config['cf_use_recommend'] && $mb_recommend)
         insert_point($mb_recommend, $config['cf_recommend_point'], $mb_id.'의 추천인', '@member', $mb_recommend, $mb_id.' 추천');
+
+
+    if($mb_level == 5) {
+
+        $mb_dir = G5_DATA_PATH.'/member/'.substr($mb_id,0,2);
+        @mkdir($mb_dir, G5_DIR_PERMISSION);
+        @chmod($mb_dir, G5_DIR_PERMISSION);
+        $filename1=time()."_store_bank.jpg";
+        $filename2=time()."_store_marketing.jpg";
+        $path1=$mb_dir."/".$filename1;
+        $path2=$mb_dir."/".$filename2;
+
+        if($_FILES['shop_bank']['tmp_name']){
+            image_resize_update($_FILES['shop_bank']['tmp_name'],$_FILES['shop_bank']['name'], $path1, 1100);
+            $banner_sql=",`store_bank`='".$filename1."'";
+        }
+        if($_FILES['shop_marketing']['tmp_name']){
+            image_resize_update($_FILES['shop_marketing']['tmp_name'],$_FILES['shop_marketing']['name'], $path2, 1100);
+            $content_sql=",`store_marketing`='".$filename2."'";
+        }
+
+        $store_sql = "insert into `store_temp` 
+                              set mb_id = '{$mb_id}',
+                                  store_name = '{$shop_name}',
+                                  store_hp = '{$shop_hp}',
+                                  store_zip = '{$shop_zip}',
+                                  store_addr1 = '{$shop_addr1}',
+                                  store_addr2 = '{$shop_addr2}',
+                                  store_cate = '{$shop_cate}',
+                                  store_number = '{$shop_number}',
+                                  store_homepage = '{$shop_homepage}',
+                                  store_date = now()
+                                  {$banner_sql} {$content_sql}";
+        sql_query($store_sql);
+    }
 
     // 회원님께 메일 발송
     if ($config['cf_email_mb_member']) {

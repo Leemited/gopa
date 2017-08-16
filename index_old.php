@@ -365,7 +365,7 @@ $best_short=sql_fetch("select * from `best_short`");
 		setTimeout(function(){main_notice_slide()},5000);
 		var n=0;
 		var main_notice_len=$("#main_notice li").length;
-		/* 메인배너 슬라이드 */
+		/* 메인배너 슬라이드
 		function main_notice_slide(act,roop){
 			n++;
 			if(n>=main_notice_len){
@@ -379,6 +379,5 @@ $best_short=sql_fetch("select * from `best_short`");
 		}
 	});
 </script>
-<?php
-include_once('./_tail.php');
+include_once('./_tail.php');*/
 ?>

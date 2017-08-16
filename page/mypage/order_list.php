@@ -6,8 +6,8 @@ $list_result = sql_query("select * from `order_form` as a left join `g5_write_ma
 while($row=sql_fetch_array($list_result)){
     $list[]=$row;
 }
-$rand = mt_rand(0,4);
-$favo_title = ["오늘은 쇼핑하기 좋은 날~ \r\n지금 바로 주문하러 가요!","오늘은 왠지 배달이 땡기는 날이야!","같은 메뉴 지겨워! 새로운 음식점 없을까?", "이제 색다를 메뉴가 필요해~" , "우리동네 인기 짱 맛집은?"];
+$rand = rand(0,4);
+$favo_title = array("오늘은 쇼핑하기 좋은 날~ \r\n지금 바로 주문하러 가요!","오늘은 왠지 배달이 땡기는 날이야!","같은 메뉴 지겨워! 새로운 음식점 없을까?", "이제 색다를 메뉴가 필요해~" , "우리동네 인기 짱 맛집은?");
 if(count($list) > 0){
 ?>
 <ul>
@@ -28,7 +28,7 @@ if(count($list) > 0){
                 break;
         }
 
-       $thumb = get_list_thumbnail("main", $list[$i]['wr_id'], 1100, 464);
+       $thumb = get_list_thumbnail("main", $list[$i]['wr_id'], 800, 530);
         if($thumb['src']) {
             $img_content = '<img src="'.$thumb['src'].'" alt="'.$thumb['alt'].'">';
         }
@@ -47,7 +47,7 @@ if(count($list) > 0){
                     <p>주문번호 : <?php echo $list[$i]["order_number"];?></p>
                 </div>
             </div>
-            <a href="javascript:fnDel(<?php echo $list[$i]['id'];?>);" class="btn"></a>
+            <a href="javascript:fnDel(<?php echo $list[$i]['id'];?>);" class="btn call"></a>
         </li>
     <?php } ?>
 </ul>

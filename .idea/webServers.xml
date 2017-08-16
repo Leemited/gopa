@@ -2,8 +2,8 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="9abac52e-1b43-40e0-8ee7-8e10fe27076c" name="gopa" url="http://flugtest.dothome.co.kr">
-        <fileTransfer host="flugtest.dothome.co.kr" port="21">
+      <webServer id="9abac52e-1b43-40e0-8ee7-8e10fe27076c" name="gopa" url="http://tecooni.cafe24.com">
+        <fileTransfer host="tecooni.cafe24.com" port="21">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" />
           </advancedOptions>

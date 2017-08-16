@@ -52,20 +52,36 @@ $cart_total = $cart_count["total"];
 		<div class="width-fixed">
 			<h1><a href="<?php echo G5_URL; ?>"></a></h1>
 			<ul>
-				<li><a href="<?php echo G5_URL."/page/intro"; ?>">회사소개</a></li>
-				<li><a href="<?php echo G5_URL."/page/rent/list.php"; ?>">단기대여</a></li>
-				<li><a href="<?php echo G5_URL."/page/rent/long.php"; ?>">장기대여</a></li>
-				<li><a href="<?php echo G5_URL."/page/accident"; ?>">사고대차</a></li>
-				<li><a href="<?php echo G5_URL."/page/mypage/reserve.php"; ?>">예약확인</a></li>
+                <?php if($is_member && $member["mb_level"]!=5){ ?>
+                    <li class="notice"><a href="<?php echo G5_URL."/bbs/board.php?bo_table=notice"; ?>">공지사항 및 이벤트</a></li>
+                    <li class="info"><a href="<?php echo G5_URL."/page/guide/guide.php"; ?>">고파 안내</a></li>
+                    <li class="point"><a href="<?php echo G5_URL."/page/mypage/point.php"; ?>">내포인트</a></li>
+                    <li class="inquiry"><a href="<?php echo G5_URL."/bbs/board.php?bo_table=qna"; ?>">고객만족센터</a></li>
+                <?php }else if($is_member && $member["mb_level"]==5 || $type=="shop"){?>
+                    <li class="order"><a href="<?php echo G5_URL."/page/shop/index.php"; ?>">홈페이지로 돌아가기</a></li>
+                    <li class="premium"><a href="<?php echo G5_URL."/page/shop/premium_form.php"; ?>">프리미엄전환</a></li>
+                    <li class="point"><a href="<?php echo G5_URL."/page/mypage/point.php"; ?>">내포인트</a></li>
+                    <li class="inquiry"><a href="<?php echo G5_URL."/bbs/board.php?bo_table=qna"; ?>">고객만족센터</a></li>
+                <?php }else{ ?>
+                    <li class="notice"><a href="<?php echo G5_URL."/bbs/board.php?bo_table=notice"; ?>">공지사항 및 이벤트</a></li>
+                    <li class="order"><a href="<?php echo G5_URL."/page/rent/order_find.php"; ?>">비회원 주문조회</a></li>
+                    <li class="info"><a href="<?php echo G5_URL."/page/guide/guide.php"; ?>">고파 안내</a></li>
+                    <li class="inquiry"><a href="<?php echo G5_URL."/bbs/board.php?bo_table=qna"; ?>">고객만족센터</a></li>
+                <?php } ?>
+				<!--<li><a href="<?php /*echo G5_URL."/page/intro"; */?>">회사소개</a></li>
+				<li><a href="<?php /*echo G5_URL."/page/rent/list.php"; */?>">단기대여</a></li>
+				<li><a href="<?php /*echo G5_URL."/page/rent/long.php"; */?>">장기대여</a></li>
+				<li><a href="<?php /*echo G5_URL."/page/accident"; */?>">사고대차</a></li>
+				<li><a href="<?php /*echo G5_URL."/page/mypage/reserve.php"; */?>">예약확인</a></li>
 				<li>
-					<a href="<?php echo G5_BBS_URL."/board.php?bo_table=notice"; ?>">커뮤니티</a>
+					<a href="<?php /*echo G5_BBS_URL."/board.php?bo_table=notice"; */?>">커뮤니티</a>
 					<ul>
-						<li><a href="<?php echo G5_BBS_URL."/board.php?bo_table=notice"; ?>">공지사항</a></li>
-						<li><a href="<?php echo G5_BBS_URL."/board.php?bo_table=event"; ?>">이벤트</a></li>
-						<li><a href="<?php echo G5_BBS_URL."/board.php?bo_table=review"; ?>">고객리뷰</a></li>
+						<li><a href="<?php /*echo G5_BBS_URL."/board.php?bo_table=notice"; */?>">공지사항</a></li>
+						<li><a href="<?php /*echo G5_BBS_URL."/board.php?bo_table=event"; */?>">이벤트</a></li>
+						<li><a href="<?php /*echo G5_BBS_URL."/board.php?bo_table=review"; */?>">고객리뷰</a></li>
 					</ul>
 				</li>
-				<li class="last"><a href="<?php echo G5_URL."/page/partner"; ?>">제휴업체</a></li>
+				<li class="last"><a href="<?php /*echo G5_URL."/page/partner"; */?>">제휴업체</a></li>-->
 			</ul>
 		</div>
 	</div>
@@ -77,12 +93,15 @@ $cart_total = $cart_count["total"];
         <?php }else{ ?>
             <h1 class="logo_header"><a href=""><span></span></a></h1>
         <?php } ?>
+        <?php if($type!="shop"){?>
         <span class="mobile_menu_btn"><a href="javascript:"></a></span>
+        <?php }?>
 		<!-- 모바일 메뉴 시작 -->
 		<div class="mobile_menu">
 			<span></span>
 			<div>
-				<div class="user_box">
+				<div class="user_box <?php if($member["mb_level"]==5){echo "seller";}?>">
+                    <?php if($member["mb_level"]!=5){?>
 					<span class="<?php echo $member["mb_sex"]=="남"?"man":"woman";?>"></span>
 					<p><?php echo $is_member?$member['mb_name']:"로그인해주세요"; ?></p>
 					<div>
@@ -94,19 +113,34 @@ $cart_total = $cart_count["total"];
 						<a href="<?php echo G5_BBS_URL."/register_form.php"; ?>" class="btn ml10 border_gray">회원가입</a>
 						<?php } ?>
 					</div>
+                    <?php }else{ ?>
+                        <h2>오늘도 <?php echo $member["mb_name"];?>사장님의</h2>
+                        <h1>성공을 응원합니다.</h1>
+                    <?php }?>
 				</div>
 				<ul>
-					<li class="home"><a href="<?php echo G5_URL; ?>">홈으로 바로가기</a></li>
-					<?php if($is_member){ ?>
-					<li class="mypage"><a href="<?php echo G5_URL."/page/mypage/"; ?>">마이페이지</a></li>
+					<?php if($is_member && $member["mb_level"]!=5){ ?>
+                    <li class="home"><a href="<?php echo G5_URL; ?>">홈으로 바로가기</a></li>
+                    <li class="mypage"><a href="<?php echo G5_URL."/page/mypage/"; ?>">마이페이지</a></li>
 					<li class="point"><a href="<?php echo G5_URL."/page/mypage/point.php"; ?>">내포인트</a></li>
 					<li class="notice"><a href="<?php echo G5_URL."/bbs/board.php?bo_table=notice"; ?>">공지사항 및 이벤트</a></li>
 					<li class="info"><a href="<?php echo G5_URL."/page/guide/guide.php"; ?>">고파 안내</a></li>
 					<li class="inquiry"><a href="<?php echo G5_URL."/bbs/board.php?bo_table=qna"; ?>">고객만족센터</a></li>
-                        <?php if($app){?>
-                        <li class="order"><a href="<?php echo G5_URL."/page/setting"; ?>">마케팅정보 푸시 설정</a></li>
-                        <?php } ?>
+                    <?php if($app){?>
+                    <li class="order"><a href="<?php echo G5_URL."/page/setting"; ?>">마케팅정보 푸시 설정</a></li>
+                    <?php } ?>
+                    <?php }else if($is_member && $member["mb_level"]==5 || $type=="shop"){?>
+                    <li class="register"><a href="<?php echo G5_BBS_URL."/logout.php?type=shop"; ?>">로그아웃</a></li>
+                    <li class="home"><a href="<?php echo G5_URL."/page/shop/index.php"; ?>">홈페이지로 돌아가기</a></li>
+                    <!--<li class="order"><a href="<?php /*echo G5_URL."/page/shop/setting.php"; */?>">상점 오픈 설정</a></li>-->
+                    <li class="point"><a href="<?php echo G5_URL."/page/mypage/point.php"; ?>">내포인트</a></li>
+                    <li class="inquiry"><a href="<?php echo G5_URL."/bbs/board.php?bo_table=qna"; ?>">고객만족센터</a></li>
+                    <li class="inquiry"><a href="<?php echo G5_URL."/bbs/board.php?bo_table=error_board&parent_id=".$parent_id; ?>">수정요청게시판</a></li>
+                    <?php if(!$is_mobile){?>
+                    <li class="info"><a href="<?php echo G5_URL."/admin/"; ?>">PC관리 페이지</a></li>
+                    <?php }?>
                     <?php }else{ ?>
+                    <li class="home"><a href="<?php echo G5_URL; ?>">홈으로 바로가기</a></li>
                     <li class="register"><a href="<?php echo G5_BBS_URL."/register_form.php"; ?>">회원가입</a></li>
                     <li class="order"><a href="<?php echo G5_URL."/page/rent/order_find.php"; ?>">비회원 주문조회</a></li>
                     <li class="notice"><a href="<?php echo G5_URL."/bbs/board.php?bo_table=notice"; ?>">공지사항 및 이벤트</a></li>
@@ -132,12 +166,13 @@ $cart_total = $cart_count["total"];
     <div id="mobile_header" class="<?php echo $wr_id?"view_mode_on":"view_mode_off";?>">
         <span class="mobile_back_btn"><a href="javascript:fnBack('<?=$back_url?>');"></a></span>
         <h1><?php echo $wr_subject; ?></h1>
-        <?php if(!$view_chk){?>
+        <?php if(!$view_chk && $type!="shop"){?>
         <span class="mobile_favorite_btn" ></span>
         <span class="mobile_favorite_btn_on" ></span>
         <span class="mobile_cart_btn" ><a href="javascript:moveLink('cart','<?php echo $wr_id;?>');"></a></span>
             <div class="cart_count"><?=$cart_total?></div>
-        <?php } ?>
+        <?php }else{ ?>
+        <?php }?>
     </div>
 	<!-- 모바일 헤더 끝 -->
 </header>

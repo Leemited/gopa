@@ -269,9 +269,9 @@ if ($w == '' || $w == 'r') {
         insert_point($member['mb_id'], $board['bo_comment_point'], "{$board['bo_subject']} {$wr_id} 글답변", $bo_table, $wr_id, '쓰기');
     }
 }  else if ($w == 'u') {
-    if (get_session('ss_bo_table') != $_POST['bo_table'] || get_session('ss_wr_id') != $_POST['wr_id']) {
-        alert('올바른 방법으로 수정하여 주십시오.', G5_BBS_URL.'/board.php?bo_table='.$bo_table);
-    }
+    //if (get_session('ss_bo_table') != $_POST['bo_table'] || get_session('ss_wr_id') != $_POST['wr_id']) {
+    //    alert('올바른 방법으로 수정하여 주십시오.', G5_BBS_URL.'/board.php?bo_table='.$bo_table);
+    //}
 
     $return_url = './board.php?bo_table='.$bo_table.'&amp;wr_id='.$wr_id;
 
@@ -447,6 +447,7 @@ for ($i=0; $i<count($_FILES['bf_file']['name']); $i++) {
             continue;
         }
 
+
         //=================================================================\
         // 090714
         // 이미지나 플래시 파일에 악성코드를 심어 업로드 하는 경우를 방지
@@ -489,9 +490,24 @@ for ($i=0; $i<count($_FILES['bf_file']['name']); $i++) {
 
         $dest_file = G5_DATA_PATH.'/file/'.$bo_table.'/'.$upload[$i]['file'];
 
+
+        $size = getimagesize($tmp_file);
+        $width = $size[0];
+        $height = $size[1];
+        if($width > $height){
+            if($width != 800){
+                alert("파일의 너비는 800px 입니다.");
+            }
+            if($height != 530){
+               alert("파일의 높이는 530px 입니다.");
+            }
+        }else{
+            alert("파일은 가로형으로 등록 바랍니다.");
+        }
+
         // 업로드가 안된다면 에러메세지 출력하고 죽어버립니다.
         $error_code = move_uploaded_file($tmp_file, $dest_file) or die($_FILES['bf_file']['error'][$i]);
-
+        
         // 올라간 파일의 퍼미션을 변경합니다.
         chmod($dest_file, G5_FILE_PERMISSION);
     }
@@ -647,7 +663,7 @@ if (!($w == 'u' || $w == 'cu') && $config['cf_email_use'] && $board['bo_use_emai
 delete_cache_latest($bo_table);
 
 if ($file_upload_msg)
-    alert($file_upload_msg, G5_HTTP_BBS_URL.'/board.php?bo_table='.$bo_table.'&amp;wr_id='.$wr_id.'&amp;page='.$page.$qstr);
+    alert($file_upload_msg, G5_URL.'/page/shop/my_store_detail_form.php?wr_id='.$wr_id.$qstr);
 else
-    goto_url(G5_HTTP_BBS_URL.'/board.php?bo_table='.$bo_table.'&amp;wr_id='.$wr_id.$qstr);
+    goto_url(G5_URL.'/page/shop/my_store_detail_form.php?wr_id='.$wr_id.$qstr);
 ?>

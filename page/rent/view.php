@@ -5,15 +5,24 @@
     }else{
 	    $back_url = G5_REFERER_URL;
     }
+
 	$bo_table="main";
 	$view=sql_fetch("select a.*,b.* from `g5_write_main` as a left join `store_detail` as b on a.wr_id = b.wr_id where a.wr_id='{$wr_id}' ");
-	$menu=sql_fetch("select * from `store_menu` where wr_id='{$wr_id}'");
 
-	$banner_row=sql_query("select * from `best_partner`");
+    $banner_row=sql_query("select * from `best_partner`");
 
-    $cmt=sql_query("select a.*,b.*,a.wr_name as name from `g5_write_main` as a left join `g5_member` as b on a.wr_name = b.mb_name  a.wr_email = b.mb_id where a.wr_is_comment=1 and a.wr_parent ='{$wr_id}' ");
+    $cmt=sql_query("select a.*,b.*,a.wr_name as name from `g5_write_main` as a left join `g5_member` as b on a.wr_name = b.mb_name and a.mb_id = b.mb_id where a.wr_is_comment=1 and a.wr_parent ='{$wr_id}' ");
 
-    $fav=sql_fetch("select id from `mypage_favorite` where mb_id = {$member['mb_no']} and wr_id = {$wr_id}");
+    $fav=sql_fetch("select id from `mypage_favorite` where mb_id = st{$member['mb_no']} and wr_id = {$wr_id}");
+
+    $cate = sql_query("select ca_name from `store_menu` where wr_id = {$wr_id} GROUP by ca_name order by ca_name  ");
+    while($row = sql_fetch_array($cate)){
+        $cate_name[] = $row;
+    }
+    $menu=sql_query("select * from `store_menu` where wr_id='{$wr_id}'");
+    while($row = sql_fetch_array($menu)){
+        $menus[] = $row;
+    }
 
     $file = get_file("main", $wr_id);
     $even = $view['wr_comment'];
@@ -46,15 +55,20 @@
 include_once(G5_PATH."/head.php");
 
 ?>
+
 	<div class="width-fixed view">
 		<section class="section01 <?php if($view['wr_7']!=1){?> padding_b_30 <?php }else{?> padding_b_10<?php }?>" id="view_section">
-			<div id="view-slide" class="owl-carousel">
-                <?php
-                for($i=1;$i<count($file)-1;$i++){
-                ?>
-                <div class="item"><img src="<?php echo G5_DATA_URL."/file/main/".$file[$i]['file']; ?>" alt=""></div>
-                <?php } ?>
+            <?php if($file["count"]>1) {?>
+            <div id="view-slide" class="owl-carousel">
+                <?php for ($i = 1; $i < count($file) - 1; $i++) { ?>
+                <div class="item"><img src="<?php echo G5_DATA_URL . "/file/main/" . $file[$i]['file']; ?>" alt=""></div>
+                <?php }?>
             </div>
+            <?php }else{?>
+            <div id="view-slide" style="height:auto;text-align: center">
+                <div class="item"><img src="<?php echo G5_DATA_URL . "/file/main/" . $file[0]['file']; ?>" alt="" style="height:100%;"></div>
+            </div>
+            <?php }?>
             <div class="section01_content">
                 <div>
                     <h1><?php echo $view["wr_subject"];?></h1>
@@ -63,18 +77,18 @@ include_once(G5_PATH."/head.php");
                 </div>
                 <?php if($view['wr_7']!=1){?>
                 <ul class="ul_btn">
-                    <li class="call" onclick="location.href='tel:<?=$view["wr_9"]?>';">전화하기</li>
+                    <li class="call" <?php if($view["store_hp"]){?>onclick="location.href='tel:<?=$view["store_hp"]?>';"<?php }else{?>onclick="alert('등록된 전화번호가 없습니다.')"<?php }?>>전화하기</li>
                     <li class="share" onclick="fnShare('<?=$wr_id?>')">공유하기</li>
-                    <li class="map" onclick="moveLink('map','<?=$view['wr_10']?>')">지도보기</li>
+                    <li class="map" <?php if($view["store_addr1"]){?>onclick="moveLink('map','<?=$view['store_addr1']?>')"<?php }else{?>onclick="alert('등록된 주소정보가 없습니다.')"<?}?>>지도보기</li>
                 </ul>
                 <div class="clear"></div>
                 <?php } ?>
             </div>
         </section>
-        <?php if($view['wr_7']==1){?>
+        <?php if($view['wr_7']==1 && $view["store_addr1"]){?>
         <section class="section01" id="view_section_info">
             <div class="section01_header">
-                <div><h2>찾아오는길</h2><span><a href="javascript:moveLink('map','<?=$view['wr_10']?>')">크게보기 ></a></span></div>
+                <div><h2>찾아오는길</h2><span><a href="javascript:moveLink('map','<?=$view['store_addr1']?>')">크게보기 ></a></span></div>
             </div>
             <div class="section01_content">
                 <div id="map" class="maps"></div>
@@ -84,7 +98,7 @@ include_once(G5_PATH."/head.php");
                 $("#map").css("height", "200px");
 
                 var map = new naver.maps.Map('map');
-                var myaddress = '<?=$view['wr_10']?>';// 도로명 주소나 지번 주소만 가능 (건물명 불가!!!!)
+                var myaddress = '<?=$view['store_addr1']?>';// 도로명 주소나 지번 주소만 가능 (건물명 불가!!!!)
                 naver.maps.Service.geocode({address: myaddress}, function(status, response) {
                     if (status !== naver.maps.Service.Status.OK) {
                         return alert(myaddress + '의 검색 결과가 없거나 기타 네트워크 에러');
@@ -118,20 +132,29 @@ include_once(G5_PATH."/head.php");
                 <div><h2>매장정보</h2><span><a href="<?=G5_URL?>/page/rent/view_detail.php?wr_id=<?=$wr_id?>&wr_subject=<?=$wr_subject?>">더보기 ></a></span></div>
             </div>
             <div class="section01_content">
-                <?php if($view['wr_7']==1){?>
-                    <img src="<?php echo G5_DATA_URL?>/file/main/<?php echo $view["etc3"];?>" alt="이미지">
-                <?php }?>
+                <?php if($view['wr_7']==1) {
+
+                    if ($view["video_link"] != "") {
+                        ?>
+                        <div class='embed-container'>
+                            <?php echo $view["video_link"];?>
+                        </div>
+                    <?php }
+                    if ($view["etc3"] != "") { ?>
+                        <img src="<?php echo G5_DATA_URL ?>/shop/<?php echo $view["etc3"]; ?>" alt="이미지">
+                    <?php }
+                }?>
                 <dl>
                     <dt>전화번호</dt>
-                    <dd><?=$view["wr_9"]?></dd>
+                    <dd><?=($view["store_hp"])?$view["store_hp"]:"전화번호 정보없음"?></dd>
                     <dt>주소</dt>
-                    <dd><?=$view["wr_10"]?></dd>
+                    <dd><?php echo ($view["store_zip"])?"(".$view["store_zip"].")":""; ?> <?php echo ($view["store_addr1"])?$view["store_addr1"]." ".$view["store_addr2"]:"등록된 주소정보가 없습니다.";?></dd>
                     <dt>운영시간</dt>
-                    <dd><?=$view["wr_5"]?></dd>
+                    <dd><?php echo ($view["open_time"] && $view["close_time"])?$view["open_time"]."~".$view["close_time"]:"등록된 운영시간 정보가 없습니다.";?></dd>
                     <dt>휴무</dt>
-                    <dd><?=$view["wr_9"]?></dd>
+                    <dd><?=($view["holiday"])?$view["holiday"]:"등록된 휴무정보가 없습니다.";?></dd>
                     <dt>소개</dt>
-                    <dd><?=$view["wr_content"]?></dd>
+                    <dd><?=($view["store_detail"])?$view["store_detail"]:"등록된 매장소개가 없습니다.";?></dd>
                 </dl>
             </div>
         </section>
@@ -140,7 +163,7 @@ include_once(G5_PATH."/head.php");
                 <?php
                 for($i=0;$banner=sql_fetch_array($banner_row);$i++){
                     ?>
-                    <div class="item"><img src="<?php echo G5_DATA_URL."/partner/".$banner['banner']; ?>" alt=""></div>
+                    <div class="item"><a href="<?php echo G5_URL?>/page/partner/"><img src="<?php echo G5_DATA_URL."/partner/".$banner['banner']; ?>" alt=""></a></div>
                 <?php } ?>
             </div>
         </section>
@@ -148,26 +171,21 @@ include_once(G5_PATH."/head.php");
 		<section class="section01" id="view_section_menu">
             <div class="accordion">
                 <?php
-                $cate = explode(",", $menu["ca_name"]);
-                $menu_name = explode(":", $menu["menu_name"]);
-                $menu_detail = explode(":",$menu["menu_detail"]);
-                $price = explode(":", $menu["menu_price"]);
-                for($i=0; $i < count($cate); $i++){
+                for($i=0; $i < count($cate_name); $i++){
                 ?>
-                <h1><?=$cate[$i]?> <img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow"></h1>
+                <h1><?=$cate_name[$i]["ca_name"]?> <img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow"></h1>
                 <ul class="opened-for-codepen" >
                     <?php
-                    $menu_title=explode(",",$menu_name[$i]);
-                    $menu_price=explode(",",$price[$i]);
-                    $detail = explode(",",$menu_detail[$i]);
-                    for($j=0;$j<count($menu_title);$j++){
+                    for($j=0;$j<count($menus);$j++){
+                        if($cate_name[$i]["ca_name"]==$menus[$j]["ca_name"]){
                     ?>
                     <li class="item" style="background-color:#fff;text-align: left;position:relative;padding:5px 0;">
-                        <h2 style="text-align:left;border-bottom:none;padding-left:10px;" id="menu_title"><?=$menu_title[$j]?></h2>
-                        <?php if($detail[$j]){ echo "<label style='font-size: 12px;color: #555;font-weight: normal;position: relative;left: 10px;top: -13px;'>".$detail[$j]."</label>" ; }?>
-                        <label for="menu_title" style="position: absolute;right:10px;top:19px;" class="price"><?=number_format($menu_price[$j])?> 원</label>
+                        <input type="hidden" id="menu_id" value="<?=$menus[$j]["id"]?>">
+                        <h2 style="text-align:left;border-bottom:none;padding-left:10px;" id="menu_title"><?=$menus[$j]["menu_name"]?></h2>
+                        <?php if($menus[$j]["menu_detail"]){ echo "<label style='font-size: 12px;color: #555;font-weight: normal;position: relative;left: 10px;top: -13px;'>".$menus[$j]["menu_detail"]."</label>" ; }?>
+                        <label for="menu_title" style="position: absolute;right:10px;top:19px;" class="price"><?=number_format($menus[$j]["menu_price"])?> 원</label>
                     </li>
-                    <?php
+                    <?php }
                     }
                     ?>
                 </ul>
@@ -181,28 +199,30 @@ include_once(G5_PATH."/head.php");
         <section class="section01" id="view_section_menu">
             <ul class="accordion">
                 <?php
-                $cate = explode(",", $menu["ca_name"]);
-                $menu_name = explode(":", $menu["menu_name"]);
-                $menu_detail = explode(":",$menu["menu_detail"]);
-                $price = explode(":", $menu["menu_price"]);
-                for($i=0; $i < count($cate); $i++){
+                for($i=0; $i < count($cate_name); $i++){
                     ?>
-                    <h1><?=$cate[$i]?> <img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow"></h1>
+                    <h1><?=$cate_name[$i]["ca_name"]?> <img src="<?php echo G5_IMG_URL; ?>/arrow.png" alt="select-arrow"></h1>
                     <ul class="opened-for-codepen" >
                         <?php
-                        $menu_title=explode(",",$menu_name[$i]);
-                        $menu_price=explode(",",$price[$i]);
-                        $detail = explode(",",$menu_detail[$i]);
-                        for($j=0;$j<count($menu_title);$j++){
 
+                        for($j=0;$j<count($menus);$j++){
+                            if($cate_name[$i]["ca_name"]==$menus[$j]["ca_name"]){
                             ?>
                             <li class="item" style="background-color:#fff;text-align: left;position:relative;padding:5px 0;min-height:60px">
-                                <div style="width:90px;padding:0 5px;position: absolute;left:0;height:60px;display: block"><img src="../../img/no_img.png" alt="" style="height: 100%;text-align: center;display: block;"></div>
-                                <h2 style="text-align:left;border-bottom:none;padding:9px 0px 9px 100px;" id="menu_title"><?=$menu_title[$j]?></h2>
-                                <?php if($detail[$j]){ echo "<span style='font-size: 12px;color: #555;font-weight: normal;position: relative;left: 100px;top: -6px;'>".$detail[$j]."</span>" ; }?>
-                                <label for="menu_title" style="position: absolute;right:10px;top:14px;" class="price"><?=number_format($menu_price[$j])?> 원</label>
+                                <input type="hidden" id="menu_id" value="<?=$menus[$j]["id"]?>">
+                                <div style="width:90px;padding:0 5px;position: absolute;left:0;height:60px;display: block">
+                                    <?php if($menus[$j]["menu_image"]==""){?>
+                                        <img src="../../img/no_img.png" alt="" style="height: 100%;text-align: center;display: block;">
+                                    <?php }else{ ?>
+                                        <img src="<?php echo G5_DATA_URL?>/shop/menu/<?php echo $menus[$j]["menu_image"];?>" alt="<?=$menus[$j]["menu_name"]?>" style="height: 100%;text-align: center;display: block;">
+                                    <?php }?>
+                                </div>
+                                <h2 style="text-align:left;border-bottom:none;padding:9px 0px 9px 100px;" id="menu_title"><?=$menus[$j]["menu_name"]?></h2>
+                                <?php if($menus[$j]["menu_detail"]){ echo "<span style='font-size: 12px;color: #555;font-weight: normal;position: relative;left: 100px;top: -6px;'>".$menus[$j]["menu_detail"]."</span>" ; }?>
+                                <label for="menu_title" style="position: absolute;right:10px;top:14px;" class="price"><?=number_format($menus[$j]["menu_price"])?> 원</label>
                             </li>
                             <?php
+                            }
                         }
                         ?>
                     </ul>
@@ -320,7 +340,7 @@ include_once(G5_PATH."/head.php");
         </section>
         <?php }?>
         <section class="section01" id="view_section" <?php if($view['wr_7']==1){?>style="margin-bottom:55px;"<?php }?>>
-            <div class="error_info" style="padding:10px 0;text-align:center;font-size:14px;color: #333;margin:5px 5px;border:2px solid #ddd;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;"><span></span>잘못된정보가 있나요? <a href="">수정요청</a></div>
+            <div class="error_info" style="padding:10px 0;text-align:center;font-size:14px;color: #333;margin:5px 5px;border:2px solid #ddd;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;"><span></span>잘못된정보가 있나요? <a href="<?php echo G5_BBS_URL;?>/write.php?bo_table=error_board&parent_id=<?php echo $wr_id?>">수정요청</a></div>
         </section>
         <?php if($view['wr_7']==1){?>
         <section class="section01" id="view_section" style="position:fixed;bottom:0;margin-bottom:0;z-index:99999">
@@ -334,10 +354,16 @@ include_once(G5_PATH."/head.php");
         <?php }?>
 	</div>
     <script src="<?php echo G5_JS_URL ?>/owl.carousel.js"></script>
+    <!-- Swiper JS -->
+    <!--<script src="<?/*=G5_JS_URL*/?>/swiper.min.js"></script>-->
     <script>
-
+        /*var swiper = new Swiper('.swiper-container', {
+            zoom:true,
+            pagination: '.swiper-pagination',
+            nextButton: '.swiper-button-next',
+            prevButton: '.swiper-button-prev'
+        });*/
         $(".owl-carousel").owlCarousel({
-            animateOut: 'fadeOut',
             autoplay:true,
             autoplayTimeout:5000,
             autoplaySpeed:2000,
@@ -362,9 +388,10 @@ include_once(G5_PATH."/head.php");
         $(document).ready(function(){
             $("li.item").click(function(){
                 var menu = $(this).find($("h2")).text();
+                var id = $(this).find($("input[type=hidden]")).val();
                 var price = $(this).find($("label.price")).text().replace(" 원","");
                 price = price.replace(",","");
-                $.post(g5_url+"/page/modal/cart_add.php",{"menu":menu,"price":price,"id":"<?=$menu["id"]?>"},function(data){
+                $.post(g5_url+"/page/modal/cart_add.php",{"menu":menu,"price":price,"id":id},function(data){
                     $(".modal").html(data);
                     modal_active();
                 });

@@ -39,7 +39,7 @@ header("Pragma: no-cache"); // HTTP/1.0
 <head>
 <meta charset="utf-8">
 <?php
-if (G5_IS_MOBILE) {
+if ($is_mobile) {
     echo '<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=1.0,user-scalable=yes" >'.PHP_EOL;
     echo '<meta name="HandheldFriendly" content="true" />'.PHP_EOL;
     echo '<meta name="format-detection" content="telephone=no" />'.PHP_EOL;
@@ -64,15 +64,15 @@ if (defined('G5_IS_ADMIN')) {
     echo '<link rel="stylesheet" href="'.G5_ADMIN_URL.'/css/admin.css">'.PHP_EOL;
 } else {
     echo '<link rel="stylesheet" href="'.G5_CSS_URL.'/'.(G5_IS_MOBILE?'mobile':'default').'.css">'.PHP_EOL;
+    echo '<link rel="stylesheet" href="'.G5_CSS_URL.'/style.css" >'.PHP_EOL;
 }
 ?>
 <link rel="shortcut icon" href="<?php echo G5_IMG_URL?>/favicon.png">
 <link rel="stylesheet" href="<?php echo G5_CSS_URL."/owl.carousel.css"; ?>" >
 <link rel="stylesheet" href="<?php echo G5_CSS_URL."/owl.theme.default.css"; ?>" >
-<link rel="stylesheet" href="<?php echo G5_CSS_URL."/style.css"; ?>" >
 <link rel="stylesheet" href="<?php echo G5_CSS_URL."/jquery-ui.css"; ?>" >
 <link rel="stylesheet" href="<?php echo G5_CSS_URL."/swiper.min.css"; ?>" >
-    <!-- 웹폰트 -->
+<!-- 웹폰트 -->
 <link href='http://fonts.googleapis.com/earlyaccess/nanumgothic.css' rel='stylesheet' type='text/css'>
 <!--[if lt IE 9]>
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -106,7 +106,6 @@ if ($is_admin) {
 <script src="<?php echo G5_JS_URL ?>/common.js"></script>
 <script src="<?php echo G5_JS_URL ?>/wrest.js"></script>
 <script src="<?php echo G5_JS_URL ?>/script.js"></script>
-<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 <?php
 if(G5_IS_MOBILE) {
     echo '<script src="'.G5_JS_URL.'/modernizr.custom.70111.js"></script>'.PHP_EOL; // overflow scroll 감지

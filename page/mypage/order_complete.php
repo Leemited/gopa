@@ -2,7 +2,7 @@
 include_once ("../../common.php");
 include_once ("../../head.php");
 
-
+$order_number = $_REQUEST["order_number"];
 ?>
 <div class="width-fixed">
     <section id="reserve_result">
@@ -15,7 +15,7 @@ include_once ("../../head.php");
                 <h3 class="reserve_result_head"></h3>
                 <p>
                     다음과 같은 정보로 예약이 완료되었습니다. <br />
-                    <?php echo ""?>
+                    <?php echo $order_number?>
                     <?php if($is_member){?>
                         예약정보 확인은 <span>마이페이지 > 주문목록</span> 메뉴에서 가능합니다.
                     <?php } else { ?>

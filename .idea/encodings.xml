@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/../../work/골드라이너/받은파일/LGU+ SmartXPay Paynow PHP (2)/payreq_crossplatform.php" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../work/골드라이너/받은파일/LGU+ SmartXPay Paynow PHP/payreq_crossplatform.php" charset="EUC-KR" />
+    <file url="file://$PROJECT_DIR$/../../work/골드라이너/받은파일/escrow_manual/escrow_sample/php/escrow_write.php" charset="EUC-KR" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

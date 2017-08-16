@@ -1,16 +1,10 @@
 <?php
-	$partner=sql_fetch("select * from `best_partner` where mb_id='".$member['mb_id']."'");
-	$branch=sql_fetch("select * from `best_branch` where mb_id='".$member['mb_id']."'");
-	if(!$is_admin && !$partner['id'] && !$branch['id']){
-		@alert("권한이 없습니다.",G5_URL);
-	}else if(!$is_admin && $partner['id'] && !$p){
-		goto_url(G5_URL."/admin/partner_view.php?id=".$partner['id']);
-	}else if(!$is_admin && $branch['id'] && !$p){
-		goto_url(G5_URL."/admin/branch_view.php?id=".$branch['id']);
+	if($member["mb_level"]<5){
+		@alert("권한이 없습니다.",G5_URL."/bbs/login.php");
 	}
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="kr">
 	<head>
 		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=1.0,user-scalable=yes">
 		<meta http-equiv="X-UA-Compatible" content="IE=10,chrome=1">
@@ -30,7 +24,6 @@
 		<script src="<?php echo G5_JS_URL ?>/script.js"></script>
 		<script src="<?php echo G5_JS_URL ?>/owl.carousel.js"></script>
 		<style type="text/css">
-		@charset "utf-8";
 		/* SIR 지운아빠 */
 
 		/* 방문자 집계 */
@@ -42,10 +35,10 @@
 		#visit dd {float:left;margin:0 30px 0 0;padding:10px;font-size:12px;}
 		#visit a {display:inline-block;padding:10px;text-decoration:none}
 		#visit a:focus, #visit a:hover {}
-		#visit br (display:block;)
+		#visit br {display:block;}
 
 		.tbl_head01 {padding:10px;}
-		.tbl_head01 .current_connect_tbl{width:100}
+		.tbl_head01 .current_connect_tbl{width:100px}
 		.tbl_head01 .current_connect_tbl td{padding:10px;}
 		</style>
 		<script>
@@ -128,59 +121,62 @@
 				<li class="accordion" data-accordion>
 					<div data-control class="list-title">사이트관리</div>
 					<div data-content class="list-item">
-						<div><a href="<?php echo G5_URL."/admin/tel.php"; ?>">전화번호관리</a></div>
-						<div><a href="<?php echo G5_URL."/admin/partner_list.php"; ?>">협력업체관리</a></div>
+						<div><a href="<?php echo G5_URL."/admin/info_list.php"; ?>">기본정보관리</a></div>
+						<div><a href="<?php echo G5_URL."/admin/banner_list.php"; ?>">배너관리</a></div>
+						<div><a href="<?php echo G5_URL."/admin/list_list.php"; ?>">리스트관리</a></div>
+					</div>
+				</li>
+				<li class="accordion" data-accordion>
+					<div data-control class="list-title">게시판관리</div>
+					<div data-content class="list-item">
+						<div><a href="<?php echo G5_URL."/admin/notice_list.php"; ?>">공지사항</a></div>
+						<div><a href="<?php echo G5_URL."/admin/qna_list.php"; ?>">고객만족센터</a></div>
 					</div>
 				</li>
 				<li class="accordion" data-accordion>
 					<div class="list-title" style="background:none;"><a href="<?php echo G5_URL."/admin/member_list.php"; ?>">회원관리</a></div>
 				</li>
 				<li class="accordion" data-accordion>
-					<div class="list-title" style="background:none;"><a href="<?php echo G5_URL."/admin/branch_list.php"; ?>">지점관리</a></div>
-				</li>
-				<li class="accordion" data-accordion>
-					<div data-control class="list-title">차량관리</div>
+					<div data-control class="list-title">판매점관리</div>
 					<div data-content class="list-item">
-						<div><a href="<?php echo G5_URL."/admin/long.php"; ?>">가격관리</a></div>
-						<div><a href="<?php echo G5_URL."/admin/model_list.php"; ?>">차종관리</a></div>
-						<div><a href="<?php echo G5_URL."/admin/car_list.php"; ?>">차량관리</a></div>
+						<div><a href="<?php echo G5_URL."/admin/partner_list.php"; ?>">신청판매점</a></div>
+						<div><a href="<?php echo G5_URL."/admin/model_list.php"; ?>">판매점관리</a></div>
 					</div>
 				</li>
 				<li class="accordion" data-accordion>
-					<div class="list-title" style="background:none;"><a href="<?php echo G5_URL."/admin/reserve_list.php"; ?>">예약관리</a></div>
+					<div data-control class="list-title">신청관리</div>
+					<div data-content class="list-item">
+						<!--<div><a href="<?php /*echo G5_URL.""; */?>">프리미엄등록신청</a></div>-->
+						<div><a href="<?php echo G5_URL."/admin/slide_list.php"; ?>">슬라이드광고신청</a></div>
+						<div><a href="<?php echo G5_URL."/admin/listup_list.php"; ?>">업체리스트노출신청</a></div>
+					</div>
 				</li>
-				<li class="accordion" data-accordion>
-					<div class="list-title" style="background:none;"><a href="<?php echo G5_URL."/admin/push.php"; ?>">이벤트 푸시 보내기</a></div>
-				</li>
-				<li class="accordion last-item" data-accordion>
-					<div><?=visit("basic")?></div>
-					<div><?=connect("basic")?></div>
-				</li>
+                <li class="accordion" data-accordion>
+                    <div data-control class="list-title">포인트관리</div>
+                    <div data-content class="list-item">
+                        <div><a href="<?php echo G5_URL."/admin/point.php"; ?>">회원</a></div>
+                        <div><a href="<?php echo G5_URL."/admin/point_shop.php"; ?>">판매점</a></div>
+                    </div>
+                </li>
 			<?php
-				}else{
-					if($partner['id']){
+				}else if($member["mb_level"]==5){
 			?>
-					<li class="accordion" data-accordion>
-						<div class="list-title" style="background:none;"><a href="<?php echo G5_URL."/admin/partner_view.php?id=".$partner['id']; ?>">협력업체관리</a></div>
-					</li>
+                <li class="accordion" data-accordion>
+                    <div class="list-title" style="background:none;"><a href="<?php echo G5_URL."/admin/my_store_list.php"; ?>">상점관리</a></div>
+                   <!-- <div data-content class="list-item">
+                        <div><a href="<?php /*echo G5_URL."/admin/long.php"; */?>">목록수정</a></div>
+                        <div><a href="<?php /*echo G5_URL."/admin/model_list.php"; */?>">메뉴수정</a></div>
+                        <div><a href="<?php /*echo G5_URL."/admin/model_list.php"; */?>">레이블달기</a></div>
+                    </div>-->
+                </li>
+                <li class="accordion" data-accordion>
+                    <div class="list-title" style="background:none;"><a href="<?php echo G5_URL."/admin/my_store_detail_list.php"; ?>">매장페이지편집</a></div>
+                </li>
 			<?php
-					}
-					if($branch['id']){
-			?>
-					<li class="accordion" data-accordion>
-						<div class="list-title" style="background:none;"><a href="<?php echo G5_URL."/admin/branch_view.php?id=".$branch['id']; ?>">지점관리</a></div>
-					</li>
-					<li class="accordion" data-accordion>
-						<div class="list-title" style="background:none;"><a href="<?php echo G5_URL."/admin/car_list.php"; ?>">차량관리</a></div>
-					</li>
-					<li class="accordion" data-accordion>
-						<div class="list-title" style="background:none;"><a href="<?php echo G5_URL."/admin/reserve_list.php"; ?>">예약관리</a></div>
-					</li>
-			<?php
-					}
+
 				}
 			?>
 			</ul>
-			<div id="copy">&copy; BESTRENTCAR All Rights Reserved.</div>
+			<div id="copy">&copy; GOPA All Rights Reserved.</div>
 		</aside>
 		<!-- 메뉴 end -->

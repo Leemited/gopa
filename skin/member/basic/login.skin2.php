@@ -10,7 +10,7 @@ $member_id = get_cookie('ck_save_id');
         <header class="login_header section01_header">
             <h1>상점 로그인</h1>
             <h3 class="login_head"></h3>
-            <p>베스트렌터카의 상점서비스를 이용하시려면 로그인해 주세요.</p>
+            <p>고파의 상점서비스를 이용하시려면 로그인해 주세요.</p>
         </header>
         <div class="section01_content wrap">
             <div id="login_form">
@@ -42,8 +42,8 @@ $member_id = get_cookie('ck_save_id');
 
                 <div class="login_link">
                     <ul>
-                        <li>아이디/비밀번호를 잊어버리셨나요?<a href="<?php echo G5_BBS_URL ?>/password_lost.php" class="btn">아이디 / 비밀번호찾기</a></li>
-                        <li class="last">아직 회원이 아니신가요?<a href="<?php echo G5_BBS_URL ?>/register_form.php" class="btn">회원가입</a></li>
+                        <li>아이디/비밀번호를 잊어버리셨나요?<a href="<?php echo G5_BBS_URL ?>/password_lost.php?type=shop" class="btn">아이디 / 비밀번호찾기</a></li>
+                        <li class="last">아직 회원이 아니신가요?<a href="<?php echo G5_BBS_URL ?>/register_form.php?type=shop" class="btn">판매자 회원가입</a></li>
                     </ul>
                 </div>
             </div>

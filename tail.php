@@ -11,7 +11,7 @@ if (G5_IS_MOBILE) {
     include_once(G5_MOBILE_PATH.'/tail.php');
     return;
 }
-$best_tel=sql_fetch("select * from `best_tel`");
+$gopa_tel=sql_fetch("select * from `gopa_tel`");
 ?>
 </div>
 <footer id="footer" class="<?php echo $main?"":"sub_footer"; ?>">
@@ -22,9 +22,9 @@ $best_tel=sql_fetch("select * from `best_tel`");
 			<li class="last"><a href="<?php echo G5_URL."/page/guide/direction.php"; ?>">오시는길</a></li>
 		</ul>
 		<p>
-			bestrentcar<!-- &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;대표 : 홍길동 -->&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;충북 청주시 흥덕구 봉명동 2449번지 파비뇽아울렛A 104호<br />
-			TEL : <?php echo hyphen_hp_number($best_tel['tel']); ?>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;fax :&nbsp;&nbsp;043-260-0042&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;E-mail : idlove38@naver.com<br />
-			Copyrightⓒ 2016 bestrentcar. All rights reserved.
+			<?php echo $gopa_tel['name']; ?>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<?php echo $gopa_tel['addr']; ?> <br />
+			TEL : <?php echo hyphen_hp_number($gopa_tel['tel']); ?>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;fax :&nbsp;&nbsp;<?php echo hyphen_hp_number($gopa_tel['tel']); ?>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;E-mail : <?php echo $gopa_tel['email']; ?><br />
+			Copyrightⓒ 2017 GOPA. All rights reserved.
 		</p>
 	</div>
 </footer>

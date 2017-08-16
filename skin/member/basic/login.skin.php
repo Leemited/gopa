@@ -10,7 +10,7 @@ $member_id = get_cookie('ck_save_id');
 		<header class="login_header section01_header">
 			<h1>로그인</h1>
 			<h3 class="login_head"></h3>
-			<p>베스트렌터카의 회원서비스를 이용하시려면 로그인해 주세요.</p>
+			<p>고파의 회원서비스를 이용하시려면 로그인해 주세요.</p>
 		</header>
 		<div class="section01_content wrap">
 			<div id="login_form">

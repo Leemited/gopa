@@ -35,12 +35,12 @@ if($oauth->check_valid_state_token($_GET['state'])) {
                 set_session('ss_oauth_member_kko_'.$oauth->profile->id.'_info', $member);
             }
         } else {
-            alert_close('서비스 장애 또는 정보가 올바르지 않습니다.');
+            alert_close('서비스 장애 또는 정보가 올바르지 않습니다.1');
         }
     } else {
-        alert_close('서비스 장애 또는 정보가 올바르지 않습니다.');
+        alert_close('서비스 장애 또는 정보가 올바르지 않습니다.2');
     }
 } else {
-    alert_close('올바른 방법으로 이용해 주십시오.');
+    alert_close('올바른 방법으로 이용해 주십시오.3');
 }
 ?>

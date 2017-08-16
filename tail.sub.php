@@ -7,8 +7,11 @@ if(defined('G5_TAIL_SUB_FILE') && is_file(G5_PATH.'/'.G5_TAIL_SUB_FILE)) {
     return;
 }
 ?>
+<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 
 <script type="text/javascript">
+    var align_type="", loc = "", ca_name = "", order_type = "",searchTxt='';
+
     function fnBack(url) {
         location.href = url;
     }
@@ -23,8 +26,6 @@ if(defined('G5_TAIL_SUB_FILE') && is_file(G5_PATH.'/'.G5_TAIL_SUB_FILE)) {
             location.href = "<?=G5_URL?>" + "/page/rent/view.php?wr_id=" + etc;
         }
     }
-    var align_type="", loc = "", ca_name = "", order_type = "";
-    var searchTxt='';
     function fnSearch(){
         searchTxt = $(".searchTxt").val();
         $.ajax({
@@ -36,14 +37,18 @@ if(defined('G5_TAIL_SUB_FILE') && is_file(G5_PATH.'/'.G5_TAIL_SUB_FILE)) {
         });
     }
     $(document).ready(function(){
-        var headers = ["H1","H2","H3","H4","H5","H6"];
+        var headers = ["H1","H2","H3","H4","H5","H6","IMG"];
 
         $(".accordion").click(function(e) {
             var target = e.target,
                 name = target.nodeName.toUpperCase();
 
             if($.inArray(name,headers) > -1) {
-                var subItem = $(target).next();
+                if(name=="IMG"){
+                    var subItem = $(target).parent().next();
+                }else{
+                    var subItem = $(target).next();
+                }
                 //slideUp all elements (except target) at current depth or greater
                 if(subItem.attr("class") && subItem.attr("class")!= "line" && subItem.attr("class") != "price") {
                     var depth = $(subItem).parents().length;
@@ -57,21 +62,21 @@ if(defined('G5_TAIL_SUB_FILE') && is_file(G5_PATH.'/'.G5_TAIL_SUB_FILE)) {
                     subItem.slideToggle("fast", function () {
                         //$(".accordion :visible:last").css("border-radius","0 0 10px 10px");
                     });
-                    //$(target).css({"border-bottom-right-radius":"0", "border-bottom-left-radius":"0"});
                 }
             }
         });
+
         $(".loc.harf-first").click(function(){
             $(".opened-for-codepen.harf-first").slideUp("fast");
-            $(".opened-for-codepen.harf.pay").slideUp("fast");
+            $("#order_cate").slideUp("fast");
         });
         $(".harf-first.center-acc").click(function(){
             $(".opened-for-codepen.harf").slideUp("fast");
-            $(".opened-for-codepen.harf.pay").slideUp("fast");
+            $("#order_cate").slideUp("fast");
         });
-        $(".opened-for-codepen.harf.pay").click(function(){
+        $("#ordertypes").click(function(){
+            $("#location_cate").slideUp("fast");
             $(".opened-for-codepen.harf-first").slideUp("fast");
-            $(".opened-for-codepen.harf").slideUp("fast");
         });
 
     })
@@ -111,7 +116,7 @@ if(defined('G5_TAIL_SUB_FILE') && is_file(G5_PATH.'/'.G5_TAIL_SUB_FILE)) {
         new daum.Postcode({
             oncomplete: function(data) {
                 // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-
+                console.log(data);
                 // 각 주소의 노출 규칙에 따라 주소를 조합한다.
                 // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
                 var fullAddr = data.address; // 최종 주소 변수
@@ -133,7 +138,11 @@ if(defined('G5_TAIL_SUB_FILE') && is_file(G5_PATH.'/'.G5_TAIL_SUB_FILE)) {
 
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
                 document.getElementById('sample2_postcode').value = data.zonecode; //5자리 새우편번호 사용
-                document.getElementById('sample2_address').value = fullAddr;
+                document.getElementById('sample2_address').value = data.roadAddress;
+                if(document.getElementById('sample2_postcode3')) {
+                    document.getElementById('sample2_postcode3').value = data.postcode;
+                    document.getElementById('sample2_address3').value = data.jibunAddress;
+                }
 
                 // iframe을 넣은 element를 안보이게 한다.
                 // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)

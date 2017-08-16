@@ -42,7 +42,7 @@ if($type=="add"){
     $sql = "delete from `cart` where cart_id = '{$cart_id}'";
     sql_query($sql);
     $count = sql_fetch("select count(cart_id)as cnt from `cart` where cart_date = CURRENT_DATE and (mb_id = '{$mb_id}' or mb_id = '{$_COOKIE[PHPSESSID]}')  and cart_state=0");
-    goto_url(G5_URL."/page/mypage/cart.php?cnt=".$count["cnt"]);
+    alert("삭제되었습니다.",G5_URL."/page/mypage/cart.php?cnt=".$count["cnt"]);
 }else if($type=="update"){
     $sql = "update `cart` set menu_count = {$num} where cart_id = '{$cart_id}'";
     sql_query($sql);

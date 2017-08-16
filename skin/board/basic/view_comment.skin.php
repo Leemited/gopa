@@ -1,16 +1,18 @@
 <?php
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 ?>
-
 <script>
 // 글자수 제한
 var char_min = parseInt(<?php echo $comment_min ?>); // 최소
 var char_max = parseInt(<?php echo $comment_max ?>); // 최대
+
 </script>
+<style>
+    .wrap{padding: 15px !important}
+</style>
 
 <!-- 댓글 시작 { -->
-<section id="bo_vc">
-    <h2>댓글목록</h2>
+<section id="bo_vc" class="wrap">
     <?php
     $cmt_amt = count($list);
     for ($i=0; $i<$cmt_amt; $i++) {
@@ -26,16 +28,15 @@ var char_max = parseInt(<?php echo $comment_max ?>); // 최대
         $comment = preg_replace("/\[\<a\s.*href\=\"(http|https|ftp|mms)\:\/\/([^[:space:]]+)\.(mp3|wma|wmv|asf|asx|mpg|mpeg)\".*\<\/a\>\]/i", "<script>doc_write(obj_movie('$1://$2.$3'));</script>", $comment);
         $cmt_sv = $cmt_amt - $i + 1; // 댓글 헤더 z-index 재설정 ie8 이하 사이드뷰 겹침 문제 해결
      ?>
-
     <article id="c_<?php echo $comment_id ?>" <?php if ($cmt_depth) { ?>style="margin-left:<?php echo $cmt_depth ?>px;border-top-color:#e0e0e0"<?php } ?>>
         <header style="z-index:<?php echo $cmt_sv; ?>">
             <h1><?php echo get_text($list[$i]['wr_name']); ?>님의 댓글</h1>
             <?php echo $list[$i]['name'] ?>
             <?php if ($cmt_depth) { ?><img src="<?php echo $board_skin_url ?>/img/icon_reply.gif" class="icon_reply" alt="댓글의 댓글"><?php } ?>
-            <?php if ($is_ip_view) { ?>
+            <!-- <?php if ($is_ip_view) { ?>
             아이피
             <span class="bo_vc_hdinfo"><?php echo $list[$i]['ip']; ?></span>
-            <?php } ?>
+            <?php } ?> -->
             작성일
             <span class="bo_vc_hdinfo"><time datetime="<?php echo date('Y-m-d\TH:i:s+09:00', strtotime($list[$i]['datetime'])) ?>"><?php echo $list[$i]['datetime'] ?></time></span>
             <?php
@@ -87,8 +88,7 @@ var char_max = parseInt(<?php echo $comment_max ?>); // 최대
         $w = 'c';
 ?>
 <!-- 댓글 쓰기 시작 { -->
-<aside id="bo_vc_w">
-    <h2>댓글쓰기</h2>
+<aside id="bo_vc_w" class="wrap">
     <form name="fviewcomment" action="./write_comment_update.php" onsubmit="return fviewcomment_submit(this);" method="post" autocomplete="off">
     <input type="hidden" name="w" value="<?php echo $w ?>" id="w">
     <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
@@ -114,7 +114,7 @@ var char_max = parseInt(<?php echo $comment_max ?>); // 최대
             <td><input type="password" name="wr_password" id="wr_password" required class="frm_input required" size="10" maxLength="20"></td>
         </tr>
         <?php } ?>
-        <tr>
+        <tr class="first">
             <th scope="row"><label for="wr_secret">비밀글사용</label></th>
             <td><input type="checkbox" name="wr_secret" value="secret" id="wr_secret"></td>
         </tr>
@@ -134,7 +134,7 @@ var char_max = parseInt(<?php echo $comment_max ?>); // 최대
         <?php
         }
         ?>
-        <tr>
+        <tr class="last">
             <th scope="row">내용</th>
             <td>
                 <?php if ($comment_min || $comment_max) { ?><strong id="char_cnt"><span id="char_count"></span>글자</strong><?php } ?>
@@ -142,7 +142,7 @@ var char_max = parseInt(<?php echo $comment_max ?>); // 최대
                 <?php if ($comment_min || $comment_max) { ?>onkeyup="check_byte('wr_content', 'char_count');"<?php } ?>><?php echo $c_wr_content;  ?></textarea>
                 <?php if ($comment_min || $comment_max) { ?><script> check_byte('wr_content', 'char_count'); </script><?php } ?>
                 <script>
-                $("textarea#wr_content[maxlength]").live("keyup change", function() {
+                $(document).on( "keyup change", "textarea#wr_content[maxlength]", function(){
                     var str = $(this).val()
                     var mx = parseInt($(this).attr("maxlength"))
                     if (str.length > mx) {

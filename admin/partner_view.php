@@ -5,7 +5,8 @@
 	if(!$id){
 		alert("잘못된 정보입니다.");
 	}
-	$view=sql_fetch("select * from `best_partner` where id='".$id."'");
+	$view=sql_fetch("select * from `store_temp` where id='".$id."'");
+	echo $view["mb_id"];
 ?>
 <!-- 본문 start -->
 <div id="wrap">
@@ -20,34 +21,48 @@
 					<table>
 						<tr>
 							<th>업체이름</th>
-							<td><?php echo $view['name']; ?></td>
+							<td><?php echo $view['store_name']; ?></td>
 						</tr>
 						<tr>
 							<th>전화번호</th>
-							<td><?php echo $view['tel']; ?></td>
+							<td><?php echo $view['store_hp']; ?></td>
 						</tr>
 						<tr>
+							<th>홈페이지</th>
+							<td><?php echo $view['store_homepage']; ?></td>
+						</tr>
+						<!--<tr>
 							<th>배너</th>
-							<td><img src="<?php echo G5_DATA_URL."/partner/".$view['banner']; ?>" alt="배너" /></td>
+							<td><img src="<?php /*echo G5_DATA_URL."/partner/".$view['banner']; */?>" alt="배너" /></td>
 						</tr>
 						<tr>
 							<th>내용</th>
-							<td><img src="<?php echo G5_DATA_URL."/partner/".$view['content']; ?>" alt="배너" /></td>
-						</tr>
-						<?php if($is_admin){ ?>
+							<td><img src="<?php /*echo G5_DATA_URL."/partner/".$view['content']; */?>" alt="배너" /></td>
+						</tr>-->
 						<tr>
-							<th>아이디</th>
-							<td><?php echo $view['mb_id']; ?></td>
+							<th>주소</th>
+							<td>(<?php echo $view['store_zip']; ?>) <?php echo $view["store_addr1"];?> <?php echo $view["store_addr2"];?></td>
 						</tr>
 						<tr>
-							<th>배너보이기</th>
-							<td><?php echo $view['show']?"보이기":"안보임"; ?></td>
+							<th>업종</th>
+							<td><?php echo $view['store_cate']; ?></td>
 						</tr>
-						<?php } ?>
+						<tr>
+							<th>사업자번호</th>
+							<td><?php echo $view['store_number']; ?></td>
+						</tr>
+						<tr>
+							<th>통장사본</th>
+							<td><img src="<?php echo G5_DATA_URL."/member/".substr($view["mb_id"],0,2)."/".$view["store_bank"];?>" alt="통장사본"></td>
+						</tr>
+						<tr>
+							<th>전단지</th>
+							<td><img src="<?php echo G5_DATA_URL."/member/".substr($view["mb_id"],0,2)."/".$view["store_marketing"];?>" alt="전단지"></td>
+						</tr>
 					</table>
 				</div>
 				<div class="text-center mt20" style="margin-bottom:20px;">
-					<a href="<?php echo G5_URL."/admin/partner_write.php?id=".$id."&page=".$page; ?>" class="adm-btn01">수정하기</a>
+					<a href="<?php echo G5_URL."/admin/partner_update.php?id=".$id."&page=".$page; ?>" class="adm-btn01">승인</a>
 					<?php if($is_admin){ ?><a href="<?php echo G5_URL."/admin/partner_list.php?page=".$page; ?>" class="adm-btn01">목록으로</a><?php } ?>
 				</div>
 			</form>

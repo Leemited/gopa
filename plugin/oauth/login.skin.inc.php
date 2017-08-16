@@ -26,11 +26,16 @@ if(BROWSER_TYPE == "M")
         <a href="<?php echo $social_oauth_url.'naver'; ?>" target="_blank" class="sns-icon social_oauth sns-naver"><span class="ico"></span><span class="txt">네이버 로그인</span></a>
         <?php } ?>
         <?php if(defined('G5_KAKAO_OAUTH_REST_API_KEY') && G5_KAKAO_OAUTH_REST_API_KEY) { ?>
-            <input type="button" class="grid_100 btn kakao" value="카카오톡 로그인" onclick="<?php if($mobile){ echo "location.href='".$social_oauth_url."kakao'"; } else { echo "alert('모바일로 이용바랍니다.');"; } ?>">
+            <?php if ($mobile) { ?>
+                <input type="button" class="grid_100 btn kakao" value="카카오톡 로그인" onclick="location.href='<?php echo $social_oauth_url."kakao";?>'">
+            <?php }?>
         <?php } ?>
         <?php if(defined('G5_FACEBOOK_CLIENT_ID') && G5_FACEBOOK_CLIENT_ID) { ?>
-            <input type="button" class="grid_100 btn facebook" value="페이스북 로그인" onclick="<?php if($mobile){ echo "location.href='".$social_oauth_url."facebook'"; }else{echo "alert('모바일로 이용바랍니다.')"; } ?>">
-        <?php } ?>
+            <?php if ($mobile) { ?>
+                <input type="button" class="grid_100 btn facebook" value="페이스북 로그인"
+                       onclick="location.href='<?php echo $social_oauth_url . "facebook"; ?>'">
+            <?php }?>
+        <?php }?>
         <?php if(defined('G5_GOOGLE_CLIENT_ID') && G5_GOOGLE_CLIENT_ID) { ?>
         <a href="<?php echo $social_oauth_url.'google'; ?>" target="_blank" class="sns-icon social_oauth sns-gg"><span class="ico"></span><span class="txt">구글 로그인</span></a>
         <?php } ?>

@@ -20,6 +20,10 @@ switch ($type){
 if($is_member){
     $cart_update = "update `cart` set mb_id = '{$mb_id}' where mb_id = '{$_COOKIE[PHPSESSID]}' " ;
     sql_query($cart_update);
+    
+    if($member["mb_addr1"]==""){
+        alert("주소 정보를 입력해주세요",G5_BBS_URL."/register_form.php?w=u");
+    }
 }
 
 $deli = sql_query("select SUM((a.menu_price+a.option_price)*a.menu_count) as total, b.delivery_price from `cart` as a left join `store_detail` as b on a.wr_id = b.wr_id where (a.mb_id = '{$member['mb_id']}' or a.mb_id = '{$_COOKIE[PHPSESSID]}' ) and cart_date = CURRENT_DATE() and cart_id in ({$cart_id})  group by a.wr_id");
@@ -83,7 +87,7 @@ if($type == "reserve"){
         $menu_price .= $list[$i]["menu_price"].",";
         $menu_count .= $list[$i]["menu_count"].",";
         $menu_option .= $list[$i]["menu_option"].",";
-        $menu_option_price .= $list[$i]["menu_option_price"].",";
+        $menu_option_price .= $list[$i]["option_price"].",";
         //$wr_id = substr($wr_id,0,strlen($wr_id)-1);
         ?>
         <div class="section01_content order_item <?php if(($col % 3) == 0){?>last<?php }?>">
@@ -203,12 +207,14 @@ if($type == "reserve"){
                     <td><input type="text" name="delivery_name" class="delivery_name" placeholder="수령인 이름"></td>
                 </tr>
                 <tr>
-                    <th rowspan="2">주소</th>
+                    <th rowspan="3">주소</th>
                     <td>
                         <input type="text" name="delivery_addr_code" id="sample2_postcode" placeholder="우편번호" style="width:50%" readonly >
                         <input type="button" value="주소찾기" class="btn grid_10" style="width:20%;" onclick="DaumPostcode()">
-                        <div id="search_addr"></div>
                     </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><div id="search_addr"></div></td>
                 </tr>
                 <tr>
                     <td>

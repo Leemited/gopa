@@ -15,7 +15,12 @@ if($error) {
 
 <script>
 alert("<?php echo $msg; ?>");
+
+<?php if(BROWSER_TYPE=="M"){?>
+location.href='<?=G5_BBS_URL?>/login.php?type=user';
+<?php }else{?>
 window.close();
+<?php }?>
 </script>
 
 <noscript>

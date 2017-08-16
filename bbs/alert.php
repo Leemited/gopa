@@ -2,13 +2,13 @@
 global $lo_location;
 global $lo_url;
 
-include_once('../common.php');
-
+//include_once('../common.php');
+/*
 if($error) {
     $g5['title'] = "오류안내 페이지";
 } else {
     $g5['title'] = "결과안내 페이지";
-}
+}*/
 include_once(G5_PATH.'/head.sub.php');
 // 필수 입력입니다.
 // 양쪽 공백 없애기

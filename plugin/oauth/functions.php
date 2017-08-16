@@ -43,6 +43,13 @@ function get_oauth_member_info($no, $nick, $service)
 
 function alert_opener_url($msg='', $url=G5_URL)
 {
+    if (preg_match('/(iPhone|Android|iPod|BlackBerry|IEMobile|HTC|Server_KO_SKT|SonyEricssonX1|SKT)/',
+        $_SERVER['HTTP_USER_AGENT']) ) {
+        define('BROWSER_TYPE', 'M'); // mobile
+    } else {
+        define('BROWSER_TYPE', 'W'); // web (iPad 는 웹으로 간주)
+    }
+
     $url = str_replace('&amp;', '&', $url);
     $url = preg_replace("/[\<\>\'\"\\\'\\\"\(\)]/", "", $url);
 
@@ -52,8 +59,11 @@ function alert_opener_url($msg='', $url=G5_URL)
     echo '<script>'.PHP_EOL;
     if(trim($msg))
         echo 'alert("'.$msg.'");'.PHP_EOL;
-    echo 'window.opener.location.href = "'.$url.'";'.PHP_EOL;
-    echo 'window.close();'.PHP_EOL;
+    //echo 'window.opener.location.href = "'.$url.'";'.PHP_EOL;
+    if(BROWSER_TYPE=="M")
+        echo "location.href='http://tecooni.cafe24.com/'".PHP_EOL;
+    else
+        echo 'window.close();'.PHP_EOL;
     echo '</script>';
     exit;
 }

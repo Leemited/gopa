@@ -12,9 +12,12 @@ if(!$is_member){
     .mypage .mypage_tab li{float:left;background-color: #cf1616;color:#fff;font-size:16px;width:33.33%;text-align:center;padding:16px 0;cursor: pointer;border-bottom:2px solid #cf1616;}
     .mypage .mypage_tab li div {background-color: #fff;}
     .mypage .mypage_tab li.active, .mypage .mypage_tab li:hover {border-bottom:2px solid #cf1616;background-color: #fff;color: #000;font-weight:bold;}
+    .section01_point{background-color: #ddd;color:#000;font-size:14px;height:40px;position: fixed;bottom:0;width:100%;}
+    .section01_point li{width:30%;float:left;padding:10px 0 10px 3.33%;}
 </style>
 <div class="width-fixed">
     <section class="mypage">
+
         <div class="user_box user_box_s">
             <div class="userEdit" style="position: absolute;top:10px;right:10px;width:12%">
                 <a href="<?php echo G5_BBS_URL."/register_form.php?w=u"; ?>"><img src="<?=G5_IMG_URL?>/mypage_edit.png" alt="회원정보수정"></a>
@@ -22,6 +25,7 @@ if(!$is_member){
             <span class="<?php echo $member["mb_sex"]=="남"?"man":"woman";?>"></span>
             <p><?php echo $is_member?$member['mb_name']:"로그인해주세요"; ?></p>
         </div>
+
         <div class="section01_content">
             <ul class="mypage_tab">
                 <li class="favorite_li <?php if($tab=="favorite" || $tab=="" || !$tab){?>active<?php }?>">찜목록</li>
@@ -32,6 +36,14 @@ if(!$is_member){
         </div>
         <div class="section01_content">
             <div class="rent_list"></div>
+        </div>
+
+        <div class="section01_point">
+            <ul>
+                <li><label>총 포인트 : <?php echo number_format($member["mb_point"])?> P</label></li>
+                <li><label>추천포인트 : <?php echo number_format((int)$member["mb_7"])?> P</label></li>
+                <li><label>단독포인트: <?php echo number_format((int)$member["mb_8"])?> P</label></li>
+            </ul>
         </div>
     </section>
 </div>

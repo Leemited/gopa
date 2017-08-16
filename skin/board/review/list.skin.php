@@ -83,7 +83,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0
 							}
 							if (count($list) == 0) {
 						?>
-						<li class="no-list">게시물이 없습니다.</li>
+						<li ><a href="">게시물이 없습니다.</a></li>
 						<?php
 							}
 						?>

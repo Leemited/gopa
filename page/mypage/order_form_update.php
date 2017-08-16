@@ -65,6 +65,10 @@ if($mb_point != 0){
     $total_price = $total_price - $mb_point;
 }
 
+$year = date("Y");
+$month = date("m");
+$day = date("d");
+
 $sql = "insert into `order_form` set 
                   cart_id = '{$cart_id}', 
                   wr_id = '{$wr_id}', 
@@ -91,16 +95,27 @@ $sql = "insert into `order_form` set
                   bank_name = '{$bank_name}', 
                   order_state = 1, 
                   order_total_price = '{$total_price}', 
-                  order_pass = PASSWORD('{$order_pass}')
+                  order_pass = PASSWORD('{$order_pass}'),
+                  order_year = '{$year}',
+                  order_month = '{$month}',
+                  order_day = '{$day}'
                   ";
 
 if(sql_query($sql)){
     $sql = "update `cart` set cart_state = 1  where cart_id in ({$cart_id})";
     sql_query($sql);
-    goto_url(G5_URL."/page/mypage/order_complete.php");
-    //주문정보 문자전송?
+    goto_url(G5_URL."/page/mypage/order_complete.php?order_number=".$order_number);
+
+
+    //상점 정보 가져오기
+    $store = sql_fetch("select m.*,s.* from `g5_write_main` as m left join `store_detail` as s on m.wr_id = s.wr_id where wr_id = '{$wr_id}'");
+    //$point = $total_price / $store["point"];
+    //구매포인트
+    //insert_point($member["mb_id"],$point);
+
     //주문정보 푸쉬보내기 (상점)
+    send_reserve_GCM("고파 주문","주문요청이 들어왔습니다.", $store["mb_id"]);
 
 }else{
-    goto_url(G5_URL."/page/mypage/order_form.php");
+    alert("주문처리 오류입니다.",G5_URL."/page/mypage/order_form.php");
 }

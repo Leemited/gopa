@@ -1,6 +1,6 @@
 <?php
 	function send_GCM($reg_id,$title,$content){
-		$apiKey = "AIzaSyCacXZEpN5Entsy02BWBU_YFuTlXB9ACKY";
+		$apiKey = "AAAAUbe_7n8:APA91bHbaZ3vvSEs1A6uzOaKEh0lYBeJouTocsl1YIApCOXRpXBCClsHz3rfxd_ytldkq6MwUuXdtvbbXallytBm1JQO_f5dtNKdxUF_OmwU_SoZRoMLdrVzeIKUhdXOiPDkYoLHlza6";
 		$regId_array=array($reg_id);
 		$url = 'https://android.googleapis.com/gcm/send';
 		$fields = array(
@@ -25,9 +25,9 @@
 		curl_close($ch);
 		$decode = json_decode($result, true);
 	}
-	function send_reserve_GCM($title,$content){
-		$apiKey = "AIzaSyCacXZEpN5Entsy02BWBU_YFuTlXB9ACKY";
-		$sql = "select regid from `g5_member` WHERE (mb_id='kj3832' or mb_id='cm12' or mb_id='ABR009419'  or mb_id='best1234' or mb_id='0330_aa') and (regid<>'' and off_gcm='0');";
+	function send_reserve_GCM($title,$content,$send_id){
+		$apiKey = "AAAAUbe_7n8:APA91bHbaZ3vvSEs1A6uzOaKEh0lYBeJouTocsl1YIApCOXRpXBCClsHz3rfxd_ytldkq6MwUuXdtvbbXallytBm1JQO_f5dtNKdxUF_OmwU_SoZRoMLdrVzeIKUhdXOiPDkYoLHlza6";
+		$sql = "select regid from `g5_member` WHERE mb_id='admin' or mb_id='{$send_id}' and (regid<>'' and off_gcm='0');";
 		$rs = sql_query($sql);
 		$num = mysql_num_rows($rs);
 		for($i=0;$row=sql_fetch_array($rs);$i++){
@@ -81,14 +81,14 @@
 
 			$decode = json_decode($result, true);
 
-			$Success = $Success + $decode["success"];
-			$Failure = $Failure + $decode["failure"];
+			//$Success = $Success + $decode["success"];
+			//$Failure = $Failure + $decode["failure"];
 
-			$result .= $result;
+			//$result .= $result;
 		}
 	}
 	function send_all_GCM($title,$content){
-		$apiKey = "AIzaSyCacXZEpN5Entsy02BWBU_YFuTlXB9ACKY";
+		$apiKey = "AAAAUbe_7n8:APA91bHbaZ3vvSEs1A6uzOaKEh0lYBeJouTocsl1YIApCOXRpXBCClsHz3rfxd_ytldkq6MwUuXdtvbbXallytBm1JQO_f5dtNKdxUF_OmwU_SoZRoMLdrVzeIKUhdXOiPDkYoLHlza6";
 		$sql = "select regid from `g5_member` WHERE regid<>'' and off_gcm='0';";
 		$rs = sql_query($sql);
 		$num = mysql_num_rows($rs);
@@ -143,10 +143,10 @@
 
 			$decode = json_decode($result, true);
 
-			$Success = $Success + $decode["success"];
-			$Failure = $Failure + $decode["failure"];
+			//$Success = $Success + $decode["success"];
+			//$Failure = $Failure + $decode["failure"];
 
-			$result .= $result;
+			//$result .= $result;
 		}
 	}
 ?>

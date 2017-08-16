@@ -3,13 +3,14 @@ if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 
 // add_stylesheet('css 구문', 출력순서); 숫자가 작을 수록 먼저 출력됨
 add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0);
+
 ?>
 <div class="width-fixed">
 	<section class="section01">
 		<header class="section01_header">
-			<h1>공지사항</h1>
-			<h3 class="notice_head"></h3>
-			<p>베스트렌터카의 주요 공지사항을 알려드립니다.</p>
+			<h1><?php echo $g5["title"]?></h1>
+			<!--<h3 class="notice_head"></h3>-->
+			<!--<p>고파의 주요 공지사항을 알려드립니다.</p>-->
 		</header>
 		<div class="section01_content wrap">
 			<div class="form_list01">
@@ -26,7 +27,9 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0
 				<input type="hidden" name="sst" value="<?php echo $sst ?>">
 				<input type="hidden" name="sod" value="<?php echo $sod ?>">
 				<input type="hidden" name="page" value="<?php echo $page ?>">
+                <input type="hidden" name="wr_1" value="<?php echo $_REQUEST["parent_id"]?>">
 				<?php
+    
 				$option = '';
 				$option_hidden = '';
 				if ($is_notice || $is_html || $is_secret || $is_mail) {
@@ -90,9 +93,9 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0
 		</div>
 	</section>
 	<?php
-	$best_tel=sql_fetch("select * from `best_tel`");
+	//$best_tel=sql_fetch("select * from `best_tel`");
 	?>
-	<div class="sub_call_pop">
+	<!--<div class="sub_call_pop">
 		<div class="top">
 			<i></i>
 			<div>
@@ -101,10 +104,10 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0
 			</div>
 		</div>
 		<div class="bottom">
-			<h1><?php echo dot_hp_number($best_tel['tel']); ?></h1>
-			<p><?php if(!$best_tel['all']){ ?><?php echo date("A h:i",strtotime($best_tel['time1'])); ?>&nbsp;&nbsp;~&nbsp;&nbsp;<?php echo date("A h:i",strtotime($best_tel['time2'])); ?><?php }else{ ?>연중무휴 24시간 영업<?php } ?></p>
+			<h1><?php /*echo dot_hp_number($best_tel['tel']); */?></h1>
+			<p><?php /*if(!$best_tel['all']){ */?><?php /*echo date("A h:i",strtotime($best_tel['time1'])); */?>&nbsp;&nbsp;~&nbsp;&nbsp;<?php /*echo date("A h:i",strtotime($best_tel['time2'])); */?><?php /*}else{ */?>연중무휴 24시간 영업<?php /*} */?></p>
 		</div>
-	</div>
+	</div>-->
 </div>
 
 <script>

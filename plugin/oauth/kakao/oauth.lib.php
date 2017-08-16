@@ -94,7 +94,7 @@ class KAKAO_OAUTH {
         curl_setopt($ch, CURLOPT_URL, $this->profile_url);
         curl_setopt($ch, CURLOPT_POST, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '.$this->access_token));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization:Bearer '.$this->access_token));
 
         $json = curl_exec($ch);
         curl_close($ch);

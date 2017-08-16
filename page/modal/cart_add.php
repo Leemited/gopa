@@ -5,44 +5,47 @@ $menu_name = $_REQUEST["menu"];
 $price = $_REQUEST["price"];
 $id = $_REQUEST["id"];
 
-$sql = sql_fetch("select `menu_name` , `option`, `option_price`, `wr_id` from `store_menu` where `id` = '{$id}'");
+$menu = sql_fetch("select * from `store_menu` where `id` = '{$id}'");
 
-
-$menu = explode(":",$sql["menu_name"]);
-$op = explode(":",$sql["option"]);
-$op_price = explode(":",$sql["option_price"]);
-for($i=0;$i<count($menu);$i++){
-    $menus = explode(",",$menu[$i]);
-    $ops = explode(",",$op[$i]);
-    $op_prices = explode(",",$op_price[$i]);
-    for($j=0;$j<count($menus);$j++) {
-        if ($menus[$j] == trim($menu_name)) {
-            $option = $ops[$j];
-            $option_price = $op_prices[$j];
-        }
-    }
-}
 ?>
-
+<style>
+    .con table{width:100%;}
+    .con table tr th{width:30%;text-align: left;font-size:16px;}
+    .con table tr td{width:70%;height:44px;text-align: right;font-size:16px;}
+    @media all and (max-width: 480px){
+        .con table tr th , .con table tr td{font-size:14px;}
+    }
+</style>
 <div class="reserve_view">
     <div id="reserve_result">
-        <input type="hidden" name="wr_id" value="<?=$sql["wr_id"]?>">
+        <input type="hidden" name="wr_id" value="<?=$menu["wr_id"]?>">
         <input type="hidden" name="menu_price" class="menu_price" value="<?=$price?>">
         <input type="hidden" name="menu_name" class="menu_name" value="<?=$menu_name?>">
         <div class="con">
             <h2>장바구니 추가</h2>
             <div class="cart_add">
                 <a href="javascript:modal_close();"><img src="<?=G5_IMG_URL?>/modal_close_btn.png" alt=""></a>
-                <dl>
-                    <dt>상품명 :</dt><dd><span id="menu_name"><?=$menu_name?></span></dd>
-                    <dt>가격(개당) :</dt><dd><span id="price"><?=$price?> 원</span></dd>
-                    <dt>개수 :</dt><dd class="num_dd"><input type="button" value="-" id="minus"><input id="num" name="num" value="1" readonly><input type="button"value="+" id="plus"></dd>
-                <?php if($option){
-                $options = explode("|" , $option);
-                $option_prices = explode("|" , $option_price);
-                ?>
-                    <dt>옵션 :</dt>
-                    <dd class="option_dd">
+                <table>
+                    <tr>
+                        <th class="cart_title">상품명 :</th>
+                        <td><span id="menu_name"><?=$menu["menu_name"]?></span></td>
+                    </tr>
+                    <tr>
+                        <th class="cart_title">가격(개당) :</th>
+                        <td><span id="price"><?=$menu["menu_price"]?> 원</span></td>
+                    </tr>
+                    <tr>
+                        <th class="cart_title">개수 :</th>
+                        <td class="num_dd"><input type="button" value="-" id="minus"><input id="num" name="num" value="1" readonly><input type="button"value="+" id="plus"></td>
+                    </tr>
+            <?php
+            if($menu["option"]){
+            $options = explode("|" , $menu["option"]);
+            $option_prices = explode("|" , $menu["option_price"]);
+            ?>
+                <tr>
+                    <th>옵션 :</th>
+                    <td class="option_dd">
                         <select name="option" id="option">
                             <?php
                             for($i=0;$i<count($options);$i++){
@@ -52,14 +55,21 @@ for($i=0;$i<count($menu);$i++){
                             }
                             ?>
                         </select>
-                    </dd>
-                    <dt>총합계 :</dt><dd><span class="total_price" id="total_price"><?php echo $price+$option_prices[0];?> 원</span></dd>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="cart_title">총합계 :</th>
+                    <td><span class="total_price" id="total_price"><?php echo $price+$option_prices[0];?> 원</span></td>
                     <input type="hidden" name="menu_total_price" class="menu_total_price" value="<?php echo $price+$option_prices[0]; ?>">
-                <?php }else{?>
-                    <dt>총합계 :</dt><dd><span class="total_price" id="total"><?=$price?> 원</span></dd>
-                <?php }?>
-                </dl>
-                <div class="clear"></div>
+                </tr>
+            <?php }else{?>
+                <tr>
+                    <th class="cart_title">총합계 :</th>
+                    <td><span class="total_price" id="total"><?=$price?> 원</span></td>
+                </tr>
+            <?php }?>
+                </table>
+            <div class="clear"></div>
             </div>
         </div>
     </div>
@@ -108,8 +118,11 @@ for($i=0;$i<count($menu);$i++){
         $.ajax({
             url:"<?=G5_URL?>/page/mypage/cart_update.php",
             method:"POST",
-            data:{"wr_id":"<?=$sql["wr_id"]?>", "mb_id":"<?=$member['mb_id']?>","menu_name":$(".menu_name").val(),"menu_price":$(".menu_price").val(),"menu_option":$("#option").val(),"num":$("#num").val(),"type":"add"}
+            data:{"wr_id":"<?=$menu["wr_id"]?>", "mb_id":"<?=$member['mb_id']?>","menu_name":$(".menu_name").val(),"menu_price":$(".menu_price").val(),"menu_option":$("#option").val(),"num":$("#num").val(),"type":"add"}
         }).done(function(data){
+            if(data){
+                alert("추가 되었습니다.");
+            }
             $(".cart_count").html(data);
             modal_close();
         })

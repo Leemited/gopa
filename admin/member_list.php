@@ -1,8 +1,9 @@
 <?php
 	include_once("../common.php");
 	include_once(G5_PATH."/admin/head.php");
+	$where = " mb_id <> 'admin' ";
 	if($sel!="" && $search!=""){
-		$where="and `{$sel}` like '%{$search}%'";
+		$where .= " and `{$sel}` like '%{$search}%'";
 	}
 	$total=sql_fetch("select count(*) as cnt from `g5_member` where 1 {$where} order by `mb_no` desc");
 	if(!$page)
@@ -11,7 +12,7 @@
 	$rows=10;
 	$start=($page-1)*$rows;
 	$total_page=ceil($total/$rows);
-	$sql="select * from `g5_member` where 1 {$where} order by `mb_no` desc limit {$start},{$rows}";
+	$sql="select * from `g5_member` where {$where} order by `mb_no` desc limit {$start},{$rows}";
 	$query=sql_query($sql);
 	$j=0;
 	while($data=sql_fetch_array($query)){
@@ -56,7 +57,7 @@
 							<th>이름</th>
 							<th class="md_none">이메일</th>
 							<th>휴대폰번호</th>
-							<th>포인트</th>
+							<th>등급</th>
 							<th class="md_none">가입일</th>
 							<th class="md_none">최종접속일</th>
 							<th>관리</th>
@@ -67,12 +68,12 @@
 						for($i=0;$i<count($list);$i++){
 					?>
 						<tr>
-							<td class="md_none" onclick="location.href='<?php echo G5_URL."/admin/member_view.php?mb_no=".$list[$i]['mb_no']; ?>';"><?php echo $list[$i]['num']; ?></td>
+							<td class="md_none" onclick="location.href='<?php echo G5_URL."/admin/member_view.php?mb_no=".$list[$i]['mb_no']; ?>';"><?php echo abs($list[$i]['num']); ?></td>
 							<td onclick="location.href='<?php echo G5_URL."/admin/member_view.php?mb_no=".$list[$i]['mb_no']; ?>';"><?php echo $list[$i]['mb_id']; ?></td>
 							<td onclick="location.href='<?php echo G5_URL."/admin/member_view.php?mb_no=".$list[$i]['mb_no']; ?>';"><?php echo $list[$i]['mb_name']; ?></td>
 							<td class="md_none" onclick="location.href='<?php echo G5_URL."/admin/member_view.php?mb_no=".$list[$i]['mb_no']; ?>';"><?php echo $list[$i]['mb_email']; ?></td>
 							<td onclick="location.href='<?php echo G5_URL."/admin/member_view.php?mb_no=".$list[$i]['mb_no']; ?>';"><?php echo $list[$i]['mb_hp']; ?></td>
-							<td onclick="location.href='<?php echo G5_URL."/admin/member_view.php?mb_no=".$list[$i]['mb_no']; ?>';"><?php echo $list[$i]['mb_point']?number_format($list[$i]['mb_point']):0; ?></td>
+							<td onclick="location.href='<?php echo G5_URL."/admin/member_view.php?mb_no=".$list[$i]['mb_no']; ?>';"><?php echo $list[$i]['mb_level']==5?"상점":"일반"; ?></td>
 							<td class="md_none" onclick="location.href='<?php echo G5_URL."/admin/member_view.php?mb_no=".$list[$i]['mb_no']; ?>';"><?php echo date("Y.m.d H:i",strtotime($list[$i]['mb_datetime'])); ?></td>
 							<td class="md_none" onclick="location.href='<?php echo G5_URL."/admin/member_view.php?mb_no=".$list[$i]['mb_no']; ?>';"><?php echo date("Y.m.d H:i",strtotime($list[$i]['mb_today_login'])); ?></td>
 							<td>

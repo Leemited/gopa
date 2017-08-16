@@ -25,7 +25,7 @@ $login_file = $member_skin_path.'/login.skin.php';
 if (!file_exists($login_file))
     $member_skin_path   = G5_SKIN_PATH.'/member/basic';
 
-if($type=="user")
+if($type=="user" || $type=="")
     include_once($member_skin_path.'/login.skin.php');
 else if($type=="shop")
     include_once($member_skin_path.'/login.skin2.php');

@@ -18,28 +18,21 @@ add_stylesheet('<link rel="stylesheet" href="'.$member_skin_url.'/style.css">', 
 				<form id="fregisterform" name="fregisterform" action="<?php echo $register_action_url ?>" onsubmit="return fregisterform_submit(this);" method="post" enctype="multipart/form-data" autocomplete="off">
 					<input type="hidden" name="w" value="<?php echo $w ?>">
 					<input type="hidden" name="url" value="<?php echo $urlencode ?>">
-					<input type="hidden" name="agree" value="<?php echo $agree ?>">
-					<input type="hidden" name="agree2" value="<?php echo $agree2 ?>">
-					<input type="hidden" name="agree3" value="<?php echo $agree3 ?>">
-					<input type="hidden" name="agree4" value="<?php echo $agree4 ?>">
 					<input type="hidden" name="cert_type" value="<?php echo $member['mb_certify']; ?>">
 					<input type="hidden" name="cert_no" value="">
 					<input type="hidden" name="regid" id="regid" value="">
 					<?php if (isset($member['mb_nick_date']) && $member['mb_nick_date'] > date("Y-m-d", G5_SERVER_TIME - ($config['cf_nick_modify'] * 86400))) { // 닉네임수정일이 지나지 않았다면  ?>
 					<input type="hidden" name="mb_nick_default" value="<?php echo $member['mb_nick'] ?>">
 					<input type="hidden" name="mb_nick" value="<?php echo $member['mb_nick'] ?>">
-					<input type="hidden" name="mb_mailling" value="1" id="reg_mb_mailling"/>
 					<input type="hidden" name="mb_sms" value="1" id="reg_mb_sms" />
 					<?php }  ?>
 					<div class="form_list01">
 						<ul>
 							<li>
 								<div>
-									<label for="reg_mb_id">이메일<span>*</span></label>
+									<label for="reg_mb_id">아이디<span>*</span></label>
 									<div>
 										<input type="text" name="mb_id" value="<?php echo isset($member['mb_id'])?$member['mb_id']:''; ?>" id="reg_mb_id" <?php echo $required ?> <?php echo $readonly ?> class="input01" >
-                                        <input type="hidden" name="mb_email" value="<?php echo isset($member['mb_email'])?$member['mb_email']:''; ?>" id="reg_mb_email" required class="input01" maxlength="100">
-                                        <input type="hidden" name="old_email" value="<?php echo $member['mb_email']; ?>">
 										<span id="msg_mb_id"></span>
 									</div>
 								</div>
@@ -52,7 +45,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$member_skin_url.'/style.css">', 
                             </li>
                             <li>
                                 <div>
-                                    <label for="reg_mb_password_re">비밀번호 확인<span>*</span></label>
+                                    <label for="reg_mb_password_re">비밀번호<br>확인<span>*</span></label>
                                     <div><input type="password" name="mb_password_re" id="reg_mb_password_re" <?php echo $required ?> class="input01" minlength="3" maxlength="20"></div>
                                 </div>
                             </li>
@@ -78,7 +71,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$member_skin_url.'/style.css">', 
                                 <div>
                                     <label for="sample2_postcode">주소<span>*</span></label>
                                     <div>
-                                        <input type="text" name="delivery_addr_code" class="input01" id="sample2_postcode" placeholder="우편번호" readonly required>
+                                        <input type="text" name="mb_zip1" class="input01" value="<?php echo $member["mb_zip1"]?>" id="sample2_postcode" placeholder="우편번호" readonly <?php echo $required ?>>
                                     </div>
                                     <div class="btn_group">
                                         <input type="button" value="주소찾기" class="btn grid_100" style="padding:8px 10px;"  onclick="DaumPostcode()">
@@ -96,8 +89,8 @@ add_stylesheet('<link rel="stylesheet" href="'.$member_skin_url.'/style.css">', 
                                 <div>
                                     <label for="sample2_address"></label>
                                     <div>
-                                        <input type="text" name="delivery_addr_1" id="sample2_address" class="input01" placeholder="기본주소" readonly required>
-                                        <input type="text" name="delivery_addr_2" id="sample2_address2" class="input01" placeholder="나머지 상세주소" required>
+                                        <input type="text" name="mb_addr1" id="sample2_address" value="<?php echo $member["mb_addr1"]?>" class="input01" placeholder="기본주소" readonly <?php echo $required ?>>
+                                        <input type="text" name="mb_addr2" id="sample2_address2" value="<?php echo $member["mb_addr2"]?>" class="input01" placeholder="나머지 상세주소" <?php echo $required ?>>
                                     </div>
                                 </div>
                             </li>
@@ -105,7 +98,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$member_skin_url.'/style.css">', 
                                 <div class="bdr">
                                     <label for="reg_mb_hp">휴대폰번호<span>*</span></label>
                                     <div>
-                                        <input type="text" name="mb_hp" value="<?php echo get_text($member['mb_hp']) ?>" id="reg_mb_hp" <?php echo ($config['cf_req_hp'])?"required":""; ?> onkeyup="return number_only(this);" class="input01" maxlength="20">
+                                        <input type="text" name="mb_hp" value="<?php echo get_text($member['mb_hp']) ?>" id="reg_mb_hp" <?php echo ($config['cf_req_hp'])?"required":""; ?> onkeyup="return number_only(this);" class="input01" maxlength="12" <?php echo $required ?>>
                                     </div>
                                     <?php //if ($config['cf_cert_use'] && $config['cf_cert_hp']) { ?>
                                         <input type="hidden" name="old_mb_hp" value="<?php echo get_text($member['mb_hp']) ?>">
@@ -117,12 +110,23 @@ add_stylesheet('<link rel="stylesheet" href="'.$member_skin_url.'/style.css">', 
                             </li>
                             <li>
                                 <div>
-                                    <label for="reg_mb_6">추천인 번호</label>
+                                    <label for="">이메일 <span>*</span></label>
                                     <div>
-                                        <input type="text" name="mb_6" value="<?php echo $member['mb_6'] ?>" id="reg_mb_6"  <?php echo $readonly ?> class="input01" minlength="3" maxlength="20">
+                                        <input type="text" name="mb_email" value="<?php echo isset($member['mb_email'])?$member['mb_email']:''; ?>" id="reg_mb_email" class="input01" maxlength="100">
+                                        <input type="hidden" name="old_email" value="<?php echo $member['mb_email']; ?>">
                                     </div>
                                 </div>
                             </li>
+                            <?php if(!$w){ ?>
+                            <li>
+                                <div>
+                                    <label for="reg_mb_hp">추천인 번호</label>
+                                    <div>
+                                        <input type="text" name="mb_6" value="<?php echo $member['mb_6'] ?>" id="reg_mb_6" <?php echo $readonly ?> class="input01" minlength="3" maxlength="20">
+                                    </div>
+                                </div>
+                            </li>
+                            <?php }?>
 						</ul>
 						<p><span>*</span> 는 필수입력사항입니다.</p>
 					</div>
@@ -131,7 +135,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$member_skin_url.'/style.css">', 
 					<p><input type="checkbox" name="mb_mailing" id="agree2" class="check01" <?php if($member['mb_mailling']==1){ echo "checked";}?> /><label for="agree2" class="check01_label"></label><label for="agree2">(선택)<a href="<?php echo G5_URL."/page/guide/agreement.php"; ?>">메일수신(이메일수집방침)</a> 동의합니다.</label></p>
 					<p><input type="checkbox" name="off_gcm" id="agree3" class="check01" <?php if($member['mb_10']=="Y"){ echo "checked";}?>/><label for="agree3" class="check01_label"></label><label for="agree3">(선택)마케팅정보 앱 푸시알림 수신에 동의합니다.</label></p>
 					<div class="btn_group01">
-						<?php if(!$w){ ?><a href="<?php echo G5_URL ?>" class="bg_lightgray btn color_white grid_50">취소</a><?php }else{ ?><a href="<?php echo G5_BBS_URL."/member_leave.php" ?>" class="bg_lightgray btn color_white grid_50">회원탈퇴</a><?php } ?>
+						<?php if(!$w){ ?><a href="<?php echo G5_URL ?>" class="bg_lightgray btn color_white grid_50">취소</a><?php }else{ ?><a href="<?php echo G5_URL."/page/mypage/member_leave_form.php" ?>" class="bg_lightgray btn color_white grid_50">회원탈퇴</a><?php } ?>
 						<input type="submit" value="<?php echo $w==''?'회원가입':'정보수정'; ?>" class="bg_darkred btn color_white grid_50" accesskey="s">
 					</div>
 				</form>
@@ -157,6 +161,8 @@ $(function() {
         var email = $(this).val();
         $("#reg_mb_email").val(email);
     })
+
+	$("#reg_zip_find").css("display", "inline-block");
 
 	<?php if($config['cf_cert_use'] && $config['cf_cert_ipin']) { ?>
 	// 아이핀인증
@@ -206,120 +212,18 @@ $(function() {
 // submit 최종 폼체크
 function fregisterform_submit(f)
 {
-	// 회원아이디 검사
-	if (f.w.value == "") {
-		var msg = reg_mb_id_check();
-		if (msg) {
-			alert(msg);
-			f.mb_id.select();
-			return false;
-		}
-	}
-
-	if (f.w.value == "") {
-		if (f.mb_password.value.length < 3) {
-			alert("비밀번호를 3글자 이상 입력하십시오.");
-			f.mb_password.focus();
-			return false;
-		}
-	}
-
-	if (f.mb_password.value != f.mb_password_re.value) {
-		alert("비밀번호가 같지 않습니다.");
-		f.mb_password_re.focus();
-		return false;
-	}
-
-	if (f.mb_password.value.length > 0) {
-		if (f.mb_password_re.value.length < 3) {
-			alert("비밀번호를 3글자 이상 입력하십시오.");
-			f.mb_password_re.focus();
-			return false;
-		}
-	}
-
-	// 이름 검사
-	if (f.w.value=="") {
-		if (f.mb_name.value.length < 1) {
-			alert("이름을 입력하십시오.");
-			f.mb_name.focus();
-			return false;
-		}
-
-		var pattern = /([^가-힣\x20])/i;
-		if (pattern.test(f.mb_name.value)) {
-			alert("이름은 한글로 입력하십시오.");
-			f.mb_name.select();
-			return false;
-		}
-	}
-
-	<?php if($w == '' && $config['cf_cert_use'] && $config['cf_cert_req']) { ?>
-	// 본인확인 체크
-	/*if(f.cert_no.value=="") {
-		alert("회원가입을 위해서는 본인확인을 해주셔야 합니다.");
-		return false;
-	}*/
-	<?php } ?>
-
-	// 닉네임 검사
-	/*if ((f.w.value == "") || (f.w.value == "u" && f.mb_nick.defaultValue != f.mb_nick.value)) {
-		var msg = reg_mb_nick_check();
-		if (msg) {
-			alert(msg);
-			f.reg_mb_nick.select();
-			return false;
-		}
-	}*/
-
-	// E-mail 검사
-	if ((f.w.value == "") || (f.w.value == "u" && f.mb_email.defaultValue != f.mb_email.value)) {
-		var msg = reg_mb_email_check();
-		if (msg) {
-			alert(msg);
-			f.reg_mb_email.select();
-			return false;
-		}
-	}
-
-	<?php if (($config['cf_use_hp'] || $config['cf_cert_hp']) && $config['cf_req_hp']) {  ?>
-	// 휴대폰번호 체크
-	var msg = reg_mb_hp_check();
-	if (msg) {
-		alert(msg);
-		f.reg_mb_hp.select();
-		return false;
-	}
-	<?php } ?>
-
-    /*
-	if (typeof f.mb_icon != "undefined") {
-		if (f.mb_icon.value) {
-			if (!f.mb_icon.value.toLowerCase().match(/.(gif)$/i)) {
-				alert("회원아이콘이 gif 파일이 아닙니다.");
-				f.mb_icon.focus();
-				return false;
-			}
-		}
-	}*/
-    /*
-	if (typeof(f.mb_recommend) != "undefined" && f.mb_recommend.value) {
-		if (f.mb_id.value == f.mb_recommend.value) {
-			alert("본인을 추천할 수 없습니다.");
-			f.mb_recommend.focus();
-			return false;
-		}
-
-		var msg = reg_mb_recommend_check();
-		if (msg) {
-			alert(msg);
-			f.mb_recommend.select();
-			return false;
-		}
-	}*/
-
-	//document.getElementById("btn_submit").disabled = "disabled";
-
+    <?php if(!$w){ ?>
+    if($("#agree").is(":checked")==false){
+        alert("이용약관 및 개인정보 처리방침에 동의하셔야 합니다.");
+        $("#agree").focus();
+        return false;
+    }
+    if($("#agree4").is(":checked")==false){
+        alert("위치기반서비스이용약관에 동의하셔야 합니다.");
+        $("#agree4").focus();
+        return false;
+    }
+    <?php } ?>
 	return true;
 }
 </script>

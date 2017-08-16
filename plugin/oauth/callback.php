@@ -93,6 +93,8 @@ if($is_member && $req_mode == 'confirm' && $req_service == $service) {
         echo '<script>'.PHP_EOL;
         echo 'document.fconfirm.submit();'.PHP_EOL;
         echo 'window.close();'.PHP_EOL;
+        if(BROWSER_TYPE=="M")
+            echo "location.href='".G5_URL."'".PHP_EOL;
         echo '</script>';
         exit;
     } else {
@@ -103,6 +105,7 @@ if($is_member && $req_mode == 'confirm' && $req_service == $service) {
         set_session('ss_oauth_member_no', '');
 
         alert_close('올바른 방법으로 이용해 주십시오.');
+
     }
 }
 
@@ -125,9 +128,24 @@ if($g5['social_member_table']) {
 
             // 정보수정에서 연동일 때 처리
             echo '<script>'.PHP_EOL;
+            echo "try{
+                      var regId = window.android.getRegid();
+                      $.ajax({
+                            url:'".G5_URL."/page/mypage/ajax.regId_insert.php',
+                            method:'POST',
+                            data:{'regid':regId,'mb_id':'".$mb[mb_id]."''}
+                      }).done(function (data) {
+                            
+                      })
+                  }catch(err){
+                    var regId = undefined;
+                    console.log(err);
+                  }".PHP_EOL;
             echo 'var $opener = window.opener;'.PHP_EOL;
             echo '$opener.$("#sns-'.$service.'").removeClass("sns-icon-not");'.PHP_EOL;
             echo 'window.close();'.PHP_EOL;
+            if(BROWSER_TYPE=="M")
+            echo "location.href='".G5_URL."'".PHP_EOL;
             echo '</script>';
             exit;
         }
@@ -255,5 +273,25 @@ var url   = "";
 if(popup.document.getElementsByName("url").length)
     url = decodeURIComponent(popup.document.getElementsByName("url")[0].value);
 popup.location.href = url;
+
+<?php if(BROWSER_TYPE=="M"){?>
+alert("<?=BROWSER_TYPE?>");
+location.href="<?=G5_URL?>";
+<?php }else{?>
+alert("<?=BROWSER_TYPE?>");
 window.close();
+<?php }?>
+try{
+    var regId = window.android.getRegid();
+    $.ajax({
+        url:'<?=G5_URL?>/page/mypage/ajax.regId_insert.php',
+        method:'POST',
+        data:{'regid':regId,'mb_id':'<?=$mb[mb_id]?>'}
+    }).done(function (data) {
+        console.log("회원정보 : "+data);
+    })
+}catch(err){
+    var regId = undefined;
+    console.log(err);
+}
 </script>

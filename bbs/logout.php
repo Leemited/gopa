@@ -20,7 +20,10 @@ if ($url) {
 } else if ($bo_table) {
     $link = G5_BBS_URL.'/board.php?bo_table='.$bo_table;
 } else {
-    $link = G5_URL;
+    if($type=="user" || $type=="")
+        $link = G5_URL;
+    else
+        $link = G5_URL."/page/shop/index.php";
 }
 
 goto_url($link);

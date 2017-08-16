@@ -15,7 +15,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$member_skin_url.'/style.css">', 
 			<i></i>
 			<h1>회원가입이 완료되었습니다!</h1>
 			<p>
-				베스트 렌터카에서 제공하는 <br />
+				고파에서 제공하는 <br />
 				모든 서비스를 이용하실 수 있습니다.
 			</p>
 			<a href="<?php echo G5_URL; ?>" class="btn">HOME</a>

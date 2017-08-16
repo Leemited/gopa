@@ -12,39 +12,11 @@ if ($is_nogood) $colspan++;
 add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0);
 ?>
 
-<h2 id="container_title"><?php echo $board['bo_subject'] ?><span class="sound_only"> 목록</span></h2>
+<h1 id="container_title"><?php echo $board['bo_subject'] ?><span class="sound_only"> 목록</span></h1>
+<!-- 게시판 검색 시작 { -->
 
 <!-- 게시판 목록 시작 { -->
 <div id="bo_list" style="width:<?php echo $width; ?>">
-
-    <!-- 게시판 카테고리 시작 { -->
-    <?php if ($is_category) { ?>
-    <nav id="bo_cate">
-        <h2><?php echo $board['bo_subject'] ?> 카테고리</h2>
-        <ul id="bo_cate_ul">
-            <?php echo $category_option ?>
-        </ul>
-    </nav>
-    <?php } ?>
-    <!-- } 게시판 카테고리 끝 -->
-
-    <!-- 게시판 페이지 정보 및 버튼 시작 { -->
-    <div class="bo_fx">
-        <div id="bo_list_total">
-            <span>Total <?php echo number_format($total_count) ?>건</span>
-            <?php echo $page ?> 페이지
-        </div>
-
-        <?php if ($rss_href || $write_href) { ?>
-        <ul class="btn_bo_user">
-            <?php if ($rss_href) { ?><li><a href="<?php echo $rss_href ?>" class="btn_b01">RSS</a></li><?php } ?>
-            <?php if ($admin_href) { ?><li><a href="<?php echo $admin_href ?>" class="btn_admin">관리자</a></li><?php } ?>
-            <?php if ($write_href) { ?><li><a href="<?php echo $write_href ?>" class="btn_b02">글쓰기</a></li><?php } ?>
-        </ul>
-        <?php } ?>
-    </div>
-    <!-- } 게시판 페이지 정보 및 버튼 끝 -->
-
     <form name="fboardlist" id="fboardlist" action="./board_list_update.php" onsubmit="return fboardlist_submit(this);" method="post">
     <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
     <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
@@ -57,17 +29,56 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0
     <input type="hidden" name="sw" value="">
 
     <div class="tbl_head01 tbl_wrap">
+       <fieldset id="bo_sch">
+    <legend>게시물 검색</legend>
+    <form name="fsearch" method="get">
+    <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
+    <input type="hidden" name="sca" value="<?php echo $sca ?>">
+    <input type="hidden" name="sop" value="and">
+    <label for="sfl" class="sound_only">검색대상</label>
+        <div class="search01">
+				<form name="fsearch" method="get">
+					<input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
+					<input type="hidden" name="sca" value="<?php echo $sca ?>">
+					<input type="hidden" name="sop" value="and">
+					<label for="sfl" class="sound_only">검색대상</label>
+					<div class="select">
+						<select name="sfl" id="sfl">
+							<option value="wr_subject"<?php echo get_selected($sfl, 'wr_subject', true); ?>>제목</option>
+							<option value="wr_content"<?php echo get_selected($sfl, 'wr_content'); ?>>내용</option>
+							<option value="wr_subject||wr_content"<?php echo get_selected($sfl, 'wr_subject||wr_content'); ?>>제목+내용</option>
+							<option value="mb_id,1"<?php echo get_selected($sfl, 'mb_id,1'); ?>>회원아이디</option>
+							<option value="mb_id,0"<?php echo get_selected($sfl, 'mb_id,0'); ?>>회원아이디(코)</option>
+							<option value="wr_name,1"<?php echo get_selected($sfl, 'wr_name,1'); ?>>글쓴이</option>
+							<option value="wr_name,0"<?php echo get_selected($sfl, 'wr_name,0'); ?>>글쓴이(코)</option>
+						</select>
+					</div>
+					<label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
+					<input type="text" name="stx" value="<?php echo stripslashes($stx) ?>" required id="stx" class="input" size="15" maxlength="20">
+					<input type="submit" value=" " class="btn">
+				</form>
+			</div>
+<!--
+    <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
+    <input type="text" name="stx" value="<?php echo stripslashes($stx) ?>" required id="stx" class="frm_input required" size="15" maxlength="20">
+    <input type="submit" value="검색" class="btn_submit">
+-->
+    </form>
+</fieldset>
         <table>
+        <colgroup>					
+            <col width="10%">
+            <col width="50%">
+            <col width="15%">
+            <col width="15%">
+            <col width="10%">
+            
+        </colgroup>
         <caption><?php echo $board['bo_subject'] ?> 목록</caption>
         <thead>
         <tr>
             <th scope="col">번호</th>
-            <?php if ($is_checkbox) { ?>
-            <th scope="col">
-                <label for="chkall" class="sound_only">현재 페이지 게시물 전체</label>
-                <input type="checkbox" id="chkall" onclick="if (this.checked) all_checked(true); else all_checked(false);">
-            </th>
-            <?php } ?>
+     
             <th scope="col">제목</th>
             <th scope="col">글쓴이</th>
             <th scope="col"><?php echo subject_sort_link('wr_datetime', $qstr2, 1) ?>날짜</a></th>
@@ -90,12 +101,9 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0
             else
                 echo $list[$i]['num'];
              ?>
-            </td>
+            </td>            
             <?php if ($is_checkbox) { ?>
-            <td class="td_chk">
-                <label for="chk_wr_id_<?php echo $i ?>" class="sound_only"><?php echo $list[$i]['subject'] ?></label>
-                <input type="checkbox" name="chk_wr_id[]" value="<?php echo $list[$i]['wr_id'] ?>" id="chk_wr_id_<?php echo $i ?>">
-            </td>
+           
             <?php } ?>
             <td class="td_subject">
                 <?php
@@ -137,11 +145,13 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0
     <?php if ($list_href || $is_checkbox || $write_href) { ?>
     <div class="bo_fx">
         <?php if ($is_checkbox) { ?>
+<!--
         <ul class="btn_bo_adm">
             <li><input type="submit" name="btn_submit" value="선택삭제" onclick="document.pressed=this.value"></li>
             <li><input type="submit" name="btn_submit" value="선택복사" onclick="document.pressed=this.value"></li>
             <li><input type="submit" name="btn_submit" value="선택이동" onclick="document.pressed=this.value"></li>
         </ul>
+-->
         <?php } ?>
 
         <?php if ($list_href || $write_href) { ?>
@@ -164,29 +174,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0
 <!-- 페이지 -->
 <?php echo $write_pages;  ?>
 
-<!-- 게시판 검색 시작 { -->
-<fieldset id="bo_sch">
-    <legend>게시물 검색</legend>
 
-    <form name="fsearch" method="get">
-    <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
-    <input type="hidden" name="sca" value="<?php echo $sca ?>">
-    <input type="hidden" name="sop" value="and">
-    <label for="sfl" class="sound_only">검색대상</label>
-    <select name="sfl" id="sfl">
-        <option value="wr_subject"<?php echo get_selected($sfl, 'wr_subject', true); ?>>제목</option>
-        <option value="wr_content"<?php echo get_selected($sfl, 'wr_content'); ?>>내용</option>
-        <option value="wr_subject||wr_content"<?php echo get_selected($sfl, 'wr_subject||wr_content'); ?>>제목+내용</option>
-        <option value="mb_id,1"<?php echo get_selected($sfl, 'mb_id,1'); ?>>회원아이디</option>
-        <option value="mb_id,0"<?php echo get_selected($sfl, 'mb_id,0'); ?>>회원아이디(코)</option>
-        <option value="wr_name,1"<?php echo get_selected($sfl, 'wr_name,1'); ?>>글쓴이</option>
-        <option value="wr_name,0"<?php echo get_selected($sfl, 'wr_name,0'); ?>>글쓴이(코)</option>
-    </select>
-    <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
-    <input type="text" name="stx" value="<?php echo stripslashes($stx) ?>" required id="stx" class="frm_input required" size="15" maxlength="20">
-    <input type="submit" value="검색" class="btn_submit">
-    </form>
-</fieldset>
 <!-- } 게시판 검색 끝 -->
 
 <?php if ($is_checkbox) { ?>

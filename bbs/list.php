@@ -27,6 +27,7 @@ if ($board['bo_use_category']) {
     }
 }
 
+
 $sop = strtolower($sop);
 if ($sop != 'and' && $sop != 'or')
     $sop = 'and';
@@ -162,15 +163,21 @@ if ($sst) {
     $sql_order = " order by {$sst} {$sod} ";
 }
 
+if($bo_table=="error_board"){
+    $sql_search .= " and parent_id = '{$parent_id}'";
+}
+
 if ($sca || $stx) {
     $sql = " select distinct wr_parent from {$write_table} where {$sql_search} {$sql_order} limit {$from_record}, $page_rows ";
 } else {
-    $sql = " select * from {$write_table} where wr_is_comment = 0 ";
+    if($bo_table=="error_board")
+        $sql = " select * from {$write_table} where wr_is_comment = 0  and parent_id={$parent_id}";
+    else
+        $sql = " select * from {$write_table} where wr_is_comment = 0  ";
     if(!empty($notice_array))
         $sql .= " and wr_id not in (".implode(', ', $notice_array).") ";
     $sql .= " {$sql_order} limit {$from_record}, $page_rows ";
 }
-
 // 페이지의 공지개수가 목록수 보다 작을 때만 실행
 if($page_rows > 0) {
     $result = sql_query($sql);
